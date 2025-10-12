@@ -4,9 +4,23 @@ An AI-powered CV optimization tool that helps job seekers create ATS-friendly re
 
 ## Demo
 
-See Dianelle AI CV Enhancer in action:
+### Screenshots
 
-https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer/assets/Dianelle_Demo.mp4
+**Home Page - Upload and Analyze Your CV**
+![Home Page](assets/home_page.jpeg)
+
+**ATS Compatibility Score Analysis**
+![ATS Score](assets/ats_score.jpeg)
+
+**AI Chat Assistant for Personalized Guidance**
+![Chat Interface](assets/chatbot_page.jpeg)
+
+**Analytics Dashboard for Progress Tracking**
+![Analytics Dashboard](assets/dashboard_page.jpeg)
+
+### Video Demo
+
+For a complete walkthrough of all features, check out our demo video: [Dianelle_Demo.mp4](assets/Dianelle_Demo.mp4)
 
 Watch how easy it is to analyze your CV, get ATS compatibility scores, receive AI-powered improvement suggestions, and track your progress with our comprehensive analytics dashboard.
 
