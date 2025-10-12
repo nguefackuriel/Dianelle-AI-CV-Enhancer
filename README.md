@@ -253,8 +253,8 @@ We welcome contributions! Here's how you can help:
 ### Development Setup
 ```bash
 # Clone and setup development environment
-git clone <repository-url>
-cd CV_Enhancer
+git clone https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer.git
+cd Dianelle-AI-CV-Enhancer
 pip install -r requirements.txt
 
 # Install development dependencies
@@ -276,16 +276,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Ollama Team**: For providing excellent local LLM infrastructure
 - **Streamlit**: For the amazing web app framework
 - **Open Source Community**: For the fantastic libraries used in this project
-
-## Success Stories
-
-> "Increased my interview callback rate from 10% to 60% after using CV Enhancer!" - Sarah M., Software Engineer
-
-> "Finally understood what ATS systems were looking for. Got my dream job within 2 months!" - John D., Marketing Manager  
-
-> "The AI suggestions were incredibly specific and actionable. Best CV tool I've ever used." - Maria L., Data Scientist
-
----
 
 **Ready to land your dream job? Start enhancing your CV today!** 
 
