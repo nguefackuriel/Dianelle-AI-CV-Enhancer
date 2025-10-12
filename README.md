@@ -2,6 +2,14 @@
 
 An AI-powered CV optimization tool that helps job seekers create ATS-friendly resumes and improve their chances of landing interviews. Built with Streamlit and local LLM integration using Ollama for complete privacy.
 
+## Demo
+
+See Dianelle AI CV Enhancer in action:
+
+https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer/assets/Dianelle_Demo.mp4
+
+Watch how easy it is to analyze your CV, get ATS compatibility scores, receive AI-powered improvement suggestions, and track your progress with our comprehensive analytics dashboard.
+
 ## Features
 
 ### Core Functionality
