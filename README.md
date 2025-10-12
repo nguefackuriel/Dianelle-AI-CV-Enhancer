@@ -76,8 +76,8 @@ Watch how easy it is to analyze your CV, get ATS compatibility scores, receive A
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd CV_Enhancer
+   git clone https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer.git
+   cd Dianelle-AI-CV-Enhancer
    ```
 
 2. **Install Python dependencies**:
