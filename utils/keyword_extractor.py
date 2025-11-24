@@ -21,18 +21,56 @@ class KeywordExtractor:
         
         # Common technical skills and keywords
         self.technical_skills = {
-            'programming': ['python', 'java', 'javascript', 'c++', 'c#', 'php', 'ruby', 'go', 'rust', 'swift'],
-            'web': ['html', 'css', 'react', 'vue', 'angular', 'node.js', 'express', 'django', 'flask'],
-            'data': ['sql', 'mongodb', 'postgresql', 'mysql', 'pandas', 'numpy', 'scikit-learn', 'tensorflow'],
-            'cloud': ['aws', 'azure', 'gcp', 'docker', 'kubernetes', 'terraform', 'jenkins'],
-            'tools': ['git', 'jira', 'confluence', 'slack', 'figma', 'photoshop', 'excel'],
+            'programming': ['python', 'java', 'javascript', 'typescript', 'c++', 'c#', 'php', 'ruby', 'go', 'rust', 'swift', 'kotlin', 'scala', 'perl', 'r', 'matlab', 'julia', 'dart', 'elixir', 'haskell'],
+            'web': ['html', 'css', 'sass', 'less', 'react', 'vue', 'angular', 'svelte', 'next.js', 'nuxt.js', 'node.js', 'express', 'django', 'flask', 'fastapi', 'spring', 'asp.net', 'laravel', 'rails', 'graphql', 'rest api', 'webpack', 'vite'],
+            'mobile': ['ios', 'android', 'react native', 'flutter', 'xamarin', 'ionic', 'swift', 'kotlin', 'objective-c'],
+            'data': ['sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'redis', 'cassandra', 'elasticsearch', 'oracle', 'sql server', 'sqlite', 'mariadb', 'dynamodb', 'neo4j', 'firebase'],
+            'data_science': ['pandas', 'numpy', 'scikit-learn', 'tensorflow', 'pytorch', 'keras', 'opencv', 'nlp', 'computer vision', 'machine learning', 'deep learning', 'data mining', 'tableau', 'power bi', 'apache spark', 'hadoop', 'airflow', 'dbt', 'jupyter'],
+            'cloud': ['aws', 'azure', 'gcp', 'heroku', 'digitalocean', 'linode', 'cloudflare', 's3', 'ec2', 'lambda', 'ecs', 'fargate', 'cloud functions', 'app engine'],
+            'devops': ['docker', 'kubernetes', 'terraform', 'ansible', 'jenkins', 'gitlab ci', 'github actions', 'circleci', 'travis ci', 'prometheus', 'grafana', 'elk stack', 'nginx', 'apache', 'ci/cd', 'helm', 'vagrant', 'puppet', 'chef'],
+            'tools': ['git', 'github', 'gitlab', 'bitbucket', 'jira', 'confluence', 'trello', 'asana', 'slack', 'teams', 'figma', 'sketch', 'adobe xd', 'photoshop', 'illustrator', 'excel', 'vscode', 'intellij', 'postman', 'swagger'],
+            'testing': ['junit', 'pytest', 'jest', 'mocha', 'selenium', 'cypress', 'playwright', 'testng', 'cucumber', 'unit testing', 'integration testing', 'e2e testing', 'tdd', 'bdd'],
+            'security': ['oauth', 'jwt', 'ssl', 'tls', 'encryption', 'penetration testing', 'vulnerability assessment', 'firewall', 'vpn', 'siem', 'ids', 'ips', 'sso', 'ldap', 'active directory'],
+            'blockchain': ['blockchain', 'ethereum', 'solidity', 'web3', 'smart contracts', 'defi', 'nft', 'cryptocurrency'],
+            'ai_ml': ['artificial intelligence', 'machine learning', 'neural networks', 'decision trees', 'random forest', 'svm', 'clustering', 'regression', 'classification', 'reinforcement learning', 'transfer learning', 'model deployment', 'mlops'],
+            'business': ['crm', 'erp', 'salesforce', 'sap', 'dynamics', 'oracle', 'peoplesoft', 'workday', 'quickbooks', 'hubspot'],
+            'methodologies': ['agile', 'scrum', 'kanban', 'waterfall', 'lean', 'six sigma', 'devops', 'itil', 'prince2', 'pmp', 'safe'],
+            'design': ['ui/ux', 'user experience', 'user interface', 'wireframing', 'prototyping', 'responsive design', 'mobile-first', 'accessibility', 'design systems', 'interaction design', 'usability testing'],
+            'networking': ['tcp/ip', 'dns', 'dhcp', 'vpn', 'routing', 'switching', 'load balancing', 'cdn', 'http', 'https', 'ftp', 'ssh', 'lan', 'wan'],
+            'analytics': ['google analytics', 'mixpanel', 'amplitude', 'segment', 'a/b testing', 'conversion optimization', 'data visualization', 'kpi', 'metrics', 'reporting'],
+            'ecommerce': ['shopify', 'magento', 'woocommerce', 'stripe', 'paypal', 'payment gateway', 'inventory management', 'order fulfillment'],
+            'content': ['cms', 'wordpress', 'drupal', 'contentful', 'sanity', 'strapi', 'seo', 'sem', 'content strategy', 'copywriting'],
+            'iot': ['iot', 'raspberry pi', 'arduino', 'mqtt', 'embedded systems', 'sensors', 'edge computing'],
         }
         
         # Action verbs commonly used in CVs
         self.action_verbs = [
-            'achieved', 'managed', 'led', 'developed', 'implemented', 'created', 'designed',
-            'improved', 'increased', 'reduced', 'optimized', 'collaborated', 'coordinated',
-            'supervised', 'trained', 'analyzed', 'evaluated', 'researched', 'planned'
+            # Leadership
+            'led', 'managed', 'directed', 'supervised', 'coordinated', 'orchestrated', 'delegated', 'mentored', 'coached', 'guided', 'championed', 'spearheaded', 'headed',
+            # Achievement
+            'achieved', 'accomplished', 'attained', 'delivered', 'exceeded', 'surpassed', 'outperformed', 'won',
+            # Creation
+            'created', 'developed', 'designed', 'built', 'established', 'founded', 'formulated', 'generated', 'initiated', 'introduced', 'launched', 'pioneered', 'produced', 'engineered', 'architected',
+            # Improvement
+            'improved', 'enhanced', 'optimized', 'streamlined', 'refined', 'upgraded', 'modernized', 'transformed', 'revitalized', 'strengthened',
+            # Analysis
+            'analyzed', 'evaluated', 'assessed', 'examined', 'investigated', 'researched', 'studied', 'surveyed', 'identified', 'diagnosed',
+            # Growth
+            'increased', 'expanded', 'grew', 'boosted', 'accelerated', 'maximized', 'scaled', 'amplified',
+            # Efficiency
+            'reduced', 'decreased', 'minimized', 'eliminated', 'streamlined', 'simplified', 'automated', 'consolidated',
+            # Communication
+            'presented', 'communicated', 'negotiated', 'persuaded', 'influenced', 'articulated', 'conveyed', 'collaborated', 'facilitated',
+            # Implementation
+            'implemented', 'executed', 'deployed', 'integrated', 'installed', 'configured', 'migrated', 'rolled out',
+            # Strategy
+            'planned', 'strategized', 'forecasted', 'budgeted', 'prioritized', 'organized', 'structured',
+            # Problem Solving
+            'solved', 'resolved', 'troubleshot', 'debugged', 'fixed', 'addressed', 'overcame',
+            # Training
+            'trained', 'educated', 'instructed', 'onboarded', 'developed',
+            # Maintenance
+            'maintained', 'sustained', 'supported', 'administered', 'monitored',
         ]
     
     def _setup_nltk(self):
@@ -207,9 +245,26 @@ class KeywordExtractor:
     def _extract_soft_skills(self, text: str) -> list:
         """Extract soft skills from text"""
         soft_skills_keywords = [
-            'communication', 'leadership', 'teamwork', 'problem solving', 'analytical',
-            'creative', 'adaptable', 'organized', 'detail oriented', 'time management',
-            'collaboration', 'critical thinking', 'interpersonal', 'presentation'
+            # Communication
+            'communication', 'written communication', 'verbal communication', 'presentation', 'public speaking', 'active listening', 'interpersonal', 'negotiation',
+            # Leadership
+            'leadership', 'team leadership', 'mentoring', 'coaching', 'delegation', 'conflict resolution', 'decision making',
+            # Teamwork
+            'teamwork', 'collaboration', 'cross-functional', 'team player', 'cooperative',
+            # Problem Solving
+            'problem solving', 'critical thinking', 'analytical', 'troubleshooting', 'innovative', 'creative thinking',
+            # Personal
+            'adaptable', 'flexible', 'resilient', 'self-motivated', 'proactive', 'initiative', 'independent', 'reliable', 'punctual',
+            # Organization
+            'organized', 'detail oriented', 'time management', 'multitasking', 'prioritization', 'project management',
+            # Work Ethic
+            'dedicated', 'committed', 'professional', 'accountable', 'responsible', 'ethical',
+            # Learning
+            'quick learner', 'continuous learning', 'growth mindset', 'curious', 'eager to learn',
+            # Customer Focus
+            'customer focused', 'customer service', 'client relations', 'stakeholder management',
+            # Results
+            'results driven', 'goal oriented', 'performance driven', 'achievement oriented',
         ]
         
         text_lower = text.lower()
