@@ -4,6 +4,31 @@ An advanced, privacy-first AI CV optimizer and career preparation platform. Dian
 
 ---
 
+## 📸 Screenshots & Interface Gallery
+
+### 1. Home Dashboard & Quick Start
+![Home Page](assets/home_page.png)
+
+### 2. AI CV Rewriter (STAR, Google XYZ, and ATS & Recruiter Double Test)
+![CV Rewriter](assets/cv_rewriter.png)
+
+### 3. LinkedIn Profile Optimizer (Hadrien's 5-Section Layout)
+![LinkedIn Optimizer](assets/linkedin_optimizer.png)
+
+### 4. Interactive Interview Preparation (Mock Interviews & STAR Practice)
+![Interview Prep](assets/interview_prep.png)
+
+### 5. Salary Negotiation & Follow-up Scripts
+![Negotiation & Follow-ups](assets/negotiation_followups.png)
+
+### 6. AI Chat Assistant (Direct Local LLM Career Coaching)
+![AI Chat Assistant](assets/chatbot_page.png)
+
+### 7. CV Analytics Dashboard (KPIs, Score Breakdowns, and Keyword Distributions)
+![CV Analytics Dashboard](assets/dashboard_page.png)
+
+---
+
 ## 🚀 Key Features
 
 ### 1. Smart CV Analysis & ATS Simulation
