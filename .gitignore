@@ -1,0 +1,21 @@
+# Resumes and generated outputs
+*.pdf
+*.docx
+
+# Environment
+venv/
+.venv/
+env/
+.env
+
+# Python Caches
+__pycache__/
+*/__pycache__/
+*.pyc
+
+# Local Data and Scratch files
+nltk_data/
+scratch/
+
+# System files
+.DS_Store

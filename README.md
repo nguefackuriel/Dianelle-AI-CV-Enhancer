@@ -1,282 +1,165 @@
-# Dianelle AI CV Enhancer - Land Your Dream Job
+# Dianelle AI CV Enhancer — Land Your Dream Job
 
-An AI-powered CV optimization tool that helps job seekers create ATS-friendly resumes and improve their chances of landing interviews. Built with Streamlit and local LLM integration using Ollama for complete privacy.
+An advanced, privacy-first AI CV optimizer and career preparation platform. Dianelle AI helps job seekers create ATS-optimized, recruiter-winning resumes, prepare for interviews, generate tailored cover letters, and optimize their LinkedIn profiles. Built with **Streamlit** and local LLM integration using **Ollama**, ensuring 100% data privacy—no data ever leaves your machine.
 
-## Demo
+---
 
-### Screenshots
+## 🚀 Key Features
 
-**Home Page - Upload and Analyze Your CV**
-![Home Page](assets/home_page.jpeg)
+### 1. Smart CV Analysis & ATS Simulation
+* **ATS Compatibility Scoring**: Generates an instant, weighted score (0–100) based on:
+  * **Keyword Match (35%)**: Relates CV content directly to target job descriptions.
+  * **CV Structure (25%)**: Validates essential sections (Contact, Summary, Experience, Education, Skills).
+  * **Content Quality (20%)**: Evaluates formatting, word usage, readability, and impact.
+  * **Technical Skills (15%)**: Assesses technical competency gaps.
+  * **ATS Formatting (5%)**: Checks parser-friendliness.
+* **Skills Gap Analysis**: Scans your CV and target job description to highlight exact missing keywords and technical terms.
+* **Formatting Audits**: Flags potential issues like incorrect date formats, missing contact info, or structural irregularities.
 
-**ATS Compatibility Score Analysis**
-![ATS Score](assets/ats_score.jpeg)
+### 2. AI CV Rewriter (STAR & Google XYZ Rules)
+* **Google XYZ Formula**: Automatically reformulates achievement bullet points: *"Accomplished [X], as measured by [Y], by doing [Z]"*.
+* **STAR Methodology**: Emphasizes **S**ituation, **T**ask, **A**ction, and **R**esults for maximum professional impact.
+* **ATS & Recruiter Double Test**: Balances dense keyword optimization for machine parsers with natural, compelling, human-readable language for real recruiters.
+* **Human Tone Engine**: Completely eliminates typical AI-generated fluff words (e.g., *furthermore*, *tapestry*, *testament*, *spearheaded*) and guarantees emoji-free, professional output.
 
-**AI Chat Assistant for Personalized Guidance**
-![Chat Interface](assets/chatbot_page.jpeg)
+### 3. Hadrien-Style Cover Letter Generator
+* **Direct 250-Word Formula**: Replaces long, generic templates with a direct, impactful 250-word cover letter.
+* **Proactive Gap Addressing**: Intelligently identifies and addresses employment or skill gaps with positive, growth-oriented context.
+* **Human-Written Feel**: Features a confident, concise tone that avoids standard AI clichés.
 
-**Analytics Dashboard for Progress Tracking**
-![Analytics Dashboard](assets/dashboard_page.jpeg)
+### 4. Interactive Interview Preparation
+* **Role-Specific Simulator**: Generates dynamic interview questions tailored to your CV and target job description.
+* **Interactive Mock Session**: Lets you answer questions directly in the app, with real-time response scoring, comprehensive feedback, and model answers.
 
-### Video Demo
+### 5. LinkedIn Profile Optimizer
+Structures your profile into Hadrien's 5 key recruiter-friendly sections:
+1. **Headline**: Under 220 characters, highly searchable, highlighting core role + key value.
+2. **About Section**: 3 paragraphs max, written in the first person (Who you are, Core achievements, Future focus).
+3. **Experience**: Google XYZ bullet points completed by "What I learned" summaries.
+4. **Skills & Featured**: Tailored selection based on job requirements.
+5. **Consistency Audit**: Assesses alignment between your CV, cover letter, and LinkedIn profile to ensure a cohesive professional brand.
 
-For a complete walkthrough of all features, check out our demo video: [Dianelle_Demo.mp4](assets/Dianelle_Demo.mp4)
+### 6. Salary Negotiation & Follow-ups
+* **Hadrien Salary Negotiation Framework**: Generates structured, polite, yet firm salary negotiation emails.
+* **Strategic Follow-up Templates**: Formulates professional follow-ups for post-application, post-interview, and active check-in scenarios.
 
-Watch how easy it is to analyze your CV, get ATS compatibility scores, receive AI-powered improvement suggestions, and track your progress with our comprehensive analytics dashboard.
+### 7. Export Engine (Word & PDF)
+* **Justified Layout**: Exports optimized CVs into perfectly formatted Word (`.docx`) and PDF documents with fully justified text alignment.
+* **Clean Encoding**: Clears encoding glitches (no unknown characters or random question marks `?` in bullet points or contact lines).
 
-## Features
+### 8. Analytics Dashboard
+* **Score Evolution**: Tracks your progress and ATS compatibility improvements over multiple iterations.
+* **Competency Breakdown**: Visualizes soft vs. technical skill coverage, layout compliance, and content impact.
 
-### Core Functionality
-- **Smart CV Analysis**: Upload PDF/DOCX files and get instant ATS compatibility scoring
-- **Keyword Optimization**: Match your CV with job descriptions for maximum impact  
-- **AI-Powered Suggestions**: Get personalized recommendations using local LLM
-- **Interactive Chat**: Discuss your career goals with an AI assistant
-- **Progress Tracking**: Monitor improvements over time with analytics dashboard
-- **Privacy-First**: Everything runs locally - no data leaves your machine
+---
 
-### Analysis Features
-- ATS compatibility scoring (0-100)
-- Keyword matching against job descriptions
-- Technical skills gap analysis  
-- CV structure and formatting validation
-- Content quality assessment with readability scoring
-- Quantified achievement detection
+## 🛠️ Technology Stack
 
-### AI Assistant Capabilities
-- Career advice and strategy guidance
-- CV improvement suggestions
-- Keyword optimization help
-- Professional summary writing assistance
-- Interview preparation tips
-- Industry-specific recommendations
+* **Frontend**: Streamlit (premium, dark-accented UI built with Inter font styling)
+* **Local AI**: Ollama (supports any model, default: `llama3.2`)
+* **Document Processing**: `PyPDF2`, `python-docx`
+* **Natural Language Processing**: `NLTK` (Tokenization, Stopwords extraction), `scikit-learn` (TF-IDF vectorization)
+* **Data Visualization**: `Plotly`
 
-### Analytics & Insights
-- Performance breakdown by component
-- Industry benchmarking
-- Progress tracking over time
-- Improvement roadmap generation
-- Success metrics visualization
+---
 
-## Technology Stack
-
-- **Frontend**: Streamlit - Interactive web interface
-- **AI/LLM**: Ollama - Local language model integration  
-- **PDF Processing**: PyPDF2, python-docx - Document parsing
-- **NLP**: NLTK, scikit-learn - Text analysis and keyword extraction
-- **Visualization**: Plotly - Interactive charts and graphs
-- **Language**: Python 3.9+
-
-## Quick Start
+## ⚡ Quick Start
 
 ### Prerequisites
-- Python 3.9 or higher
-- Ollama installed and running locally
+* **Python 3.9+** installed on your system.
+* **Ollama** installed and running locally.
 
 ### Installation
 
-1. **Clone the repository**:
+1. **Clone the Repository**:
    ```bash
    git clone https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer.git
    cd Dianelle-AI-CV-Enhancer
    ```
 
-2. **Install Python dependencies**:
+2. **Create a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Install and setup Ollama**:
+4. **Install NLTK Text Resources**:
    ```bash
-   # Install Ollama (visit https://ollama.ai for installation instructions)
-   
-   # Pull a language model (choose one):
-   ollama pull llama3.2          # Recommended for general use
-   ollama pull mistral         # Good alternative
-   ollama pull neural-chat     # Optimized for conversations
+   python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('stopwords')"
    ```
 
-4. **Start Ollama server**:
+5. **Set Up Ollama**:
+   Make sure Ollama is installed (download from [ollama.ai](https://ollama.ai)) and pull a model:
+   ```bash
+   # Pull the default recommended model
+   ollama pull llama3.2:3b
+   
+   # Or any other model of your choice
+   ollama pull llama3
+   ollama pull mistral
+   ```
+
+---
+
+## 运行 & Running the App
+
+1. **Start the Ollama Local Server**:
    ```bash
    ollama serve
    ```
 
-5. **Run the application**:
+2. **Start the Streamlit Application**:
    ```bash
    streamlit run app.py
    ```
 
-6. **Open your browser**:
-   - Navigate to `http://localhost:8501`
-   - Start enhancing your CV!
+3. **Access the Web Interface**:
+   Open your web browser and navigate to:
+   ```text
+   http://localhost:8501
+   ```
 
-## How to Use
+---
 
-### 1. Upload Your CV
-- Go to the " CV Analysis" page
-- Upload your CV in PDF or DOCX format
-- Review the extracted text to ensure accuracy
+## 📋 Privacy & Privacy-First Architecture
 
-### 2. Add Job Description  
-- Paste the complete job description in the text area
-- Include requirements, responsibilities, and qualifications
-- The more detailed, the better the analysis
+* **100% Offline Processing**: All file parsing, keyword scoring, analytics generation, and AI generation are executed locally.
+* **No Telemetry / API Keys**: You do not need external API keys (OpenAI, Anthropic, etc.). Everything runs within your local Ollama runtime.
+* **Volatile Session Storage**: Extracted CV contents and chat history reside in Streamlit's local session memory and are immediately cleared when you close the browser tab.
 
-### 3. Analyze Your CV
-- Click " Analyze CV" to start the analysis
-- Wait for the AI to process your documents
-- Review your ATS compatibility score and breakdown
+---
 
-### 4. Review Suggestions
-- Check the improvement suggestions by priority
-- Get detailed guidance for each recommendation
-- Use the AI chat for personalized advice
+## 🔧 Configuration & Customization
 
-### 5. Track Progress
-- Visit the " Analytics Dashboard" for insights
-- Monitor your improvement over time
-- Set goals and track achievements
+* **Model Selection**: You can switch between any local Ollama models directly via the **Settings** page or by updating models in `utils/ollama_client.py`.
+* **Temperature Slider**: Control the creativity vs. strictness of the rewrites and responses under the **Settings** menu.
+* **Scoring Parameters**: Fine-tune the ATS criteria weights by editing `utils/scoring_system.py`.
 
-### 6. Chat with AI Assistant
-- Go to " AI Chat Assistant" page
-- Ask questions about your CV or career
-- Get personalized recommendations and tips
+---
 
-## Key Benefits
+## 🐞 Troubleshooting
 
-### For Job Seekers
-- **Higher Interview Rates**: ATS-optimized CVs get past initial screening
-- **Personalized Guidance**: AI advice tailored to your specific situation
-- **Time Savings**: Automated analysis instead of manual CV review
-- **Skills Development**: Learn what employers actually look for
-- **Confidence Boost**: Know your CV is professionally optimized
+### Ollama Connection Error
+* Ensure the Ollama server is running by executing `ollama list` in your terminal. If it fails, start it with `ollama serve`.
+* If you run a custom port/host, verify that Ollama is listening on `http://localhost:11434`.
 
-### For Career Changers
-- **Gap Analysis**: Identify missing skills for target roles
-- **Industry Insights**: Learn industry-specific CV best practices  
-- **Skill Translation**: Convert experience to new field language
-- **Networking Prep**: Optimize LinkedIn profile consistency
+### Character Encoding Glitches in PDF
+* If you see random question marks `?` or unexpected symbol conversions in your exported PDF, ensure that the input CV text contains standard UTF-8 characters, and download the freshly generated file from the **Export CV** page where formatting cleanups are applied automatically.
 
-### For Recent Graduates
-- **Professional Formatting**: Learn proper CV structure and content
-- **Achievement Focus**: Transform activities into professional accomplishments
-- **Keyword Education**: Understand industry terminology and requirements
-- **Career Guidance**: Get advice on career path and development
+### Performance Lag
+* Large models (e.g. `llama3:8b`) may run slower on machines without dedicated GPU accelerators (such as Apple Silicon or NVIDIA cards). If processing is slow, run `ollama pull llama3.2` to download the highly optimized 3B parameters version.
 
-## Configuration
+---
 
-### Ollama Model Selection
-You can use different models based on your needs:
+## 📝 License
 
-- **llama3.2**: Best overall performance, good for analysis and advice
-- **mistral**: Faster responses, good for quick suggestions  
-- **neural-chat**: Optimized for conversational interactions
-- **codellama**: Best for technical roles and programming CVs
+This project is licensed under the MIT License - see the [LICENSE](file:///Users/urielnguefackyefou/Downloads/Dianelle-AI-CV-Enhancer/LICENSE) file for details.
 
-Change the model in Settings or by modifying `utils/ollama_client.py`.
+---
 
-### Customization Options
-- Adjust AI response creativity (temperature setting)
-- Modify scoring weights in `utils/scoring_system.py`
-- Add industry-specific keywords in `utils/keyword_extractor.py`
-- Customize suggestion templates in `components/improvement_suggestions.py`
-
-## Scoring System
-
-The ATS compatibility score (0-100) is calculated based on:
-
-- **Keyword Match (35%)**: Relevance to job description
-- **CV Structure (25%)**: Organization and essential sections  
-- **Content Quality (20%)**: Writing quality and achievements
-- **Technical Skills (15%)**: Required skills matching
-- **ATS Formatting (5%)**: Scanner-friendly formatting
-
-## Privacy & Security
-
-- **Local Processing**: All analysis runs on your machine
-- **No Data Upload**: Documents never leave your computer
-- **Private AI**: Ollama runs locally, no external API calls
-- **Session Storage**: Data cleared when you close the browser
-- **Open Source**: Full transparency of code and processes
-
-## Troubleshooting
-
-### Common Issues
-
-**Ollama Connection Error**:
-```bash
-# Check if Ollama is running
-ollama list
-
-# Start Ollama if not running
-ollama serve
-
-# Pull a model if none available
-ollama pull llama2
-```
-
-**PDF Extraction Issues**:
-- Ensure PDF is not password protected
-- Try converting to DOCX format
-- Check if PDF contains extractable text (not just images)
-
-**Slow Performance**:
-- Use a smaller Ollama model (mistral instead of llama2)
-- Close other resource-intensive applications
-- Reduce analysis text length in settings
-
-**Import Errors**:
-```bash
-# Reinstall requirements
-pip install --upgrade -r requirements.txt
-
-# Install missing NLTK data
-python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
-```
-
-### Getting Help
-
-1. Check the troubleshooting section above
-2. Review Ollama documentation at https://ollama.ai
-3. Ensure all requirements are properly installed
-4. Check Python version compatibility (3.8+)
-
-## Contributing
-
-We welcome contributions! Here's how you can help:
-
-1. **Report Issues**: Found a bug? Report it in the issues section
-2. **Suggest Features**: Have ideas for improvements? Let us know
-3. **Submit PRs**: Fix bugs or add features with pull requests
-4. **Improve Documentation**: Help make the README and docs better
-5. **Share Feedback**: Tell us about your experience using the tool
-
-### Development Setup
-```bash
-# Clone and setup development environment
-git clone https://github.com/nguefackuriel/Dianelle-AI-CV-Enhancer.git
-cd Dianelle-AI-CV-Enhancer
-pip install -r requirements.txt
-
-# Install development dependencies
-pip install black flake8 pytest
-
-# Run tests
-pytest tests/
-
-# Format code
-black .
-```
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- **Ollama Team**: For providing excellent local LLM infrastructure
-- **Streamlit**: For the amazing web app framework
-- **Open Source Community**: For the fantastic libraries used in this project
-
-**Ready to land your dream job? Start enhancing your CV today!** 
-
-For more information, visit our documentation or reach out for support.
+*Made with 💜 for ambitious builders and job seekers.*

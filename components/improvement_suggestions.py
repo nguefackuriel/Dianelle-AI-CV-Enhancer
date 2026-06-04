@@ -16,20 +16,20 @@ class ImprovementSuggestions:
         
         # Priority levels for suggestions
         self.priority_colors = {
-            'high': '🔴',
-            'medium': '🟡', 
-            'low': '🟢'
+            'high': 'HIGH',
+            'medium': 'MED', 
+            'low': 'LOW'
         }
         
         # Category icons
         self.category_icons = {
-            'keywords': '🔍',
-            'structure': '📋',
-            'content': '📝',
-            'formatting': '🎨',
-            'technical_skills': '⚙️',
-            'achievements': '🏆',
-            'language': '💬'
+            'keywords': 'Keywords',
+            'structure': 'Structure',
+            'content': 'Content',
+            'formatting': 'Format',
+            'technical_skills': 'Skills',
+            'achievements': 'Achievements',
+            'language': 'Language'
         }
     
     def display_suggestions(self, analysis_results: Dict[str, Any]):

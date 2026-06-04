@@ -17,7 +17,7 @@ class PDFProcessor:
     
     def extract_text(self, uploaded_file) -> str:
         """
-        Extract text from uploaded PDF or DOCX file
+        Extract text from uploaded PDF, DOCX, TXT, or RTF file
         
         Args:
             uploaded_file: Streamlit uploaded file object
@@ -31,6 +31,10 @@ class PDFProcessor:
             return self._extract_from_pdf(uploaded_file)
         elif file_extension == 'docx':
             return self._extract_from_docx(uploaded_file)
+        elif file_extension == 'txt':
+            return self._extract_from_txt(uploaded_file)
+        elif file_extension == 'rtf':
+            return self._extract_from_rtf(uploaded_file)
         else:
             raise ValueError(f"Unsupported file format: {file_extension}")
     
@@ -64,6 +68,30 @@ class PDFProcessor:
             
         except Exception as e:
             raise Exception(f"Error extracting text from DOCX: {str(e)}")
+
+    def _extract_from_txt(self, uploaded_file) -> str:
+        """Extract text from TXT file"""
+        try:
+            file_bytes = uploaded_file.read()
+            try:
+                return file_bytes.decode('utf-8').strip()
+            except UnicodeDecodeError:
+                return file_bytes.decode('latin-1').strip()
+        except Exception as e:
+            raise Exception(f"Error extracting text from TXT: {str(e)}")
+
+    def _extract_from_rtf(self, uploaded_file) -> str:
+        """Extract text from RTF file"""
+        try:
+            from striprtf.striprtf import rtf_to_text
+            file_bytes = uploaded_file.read()
+            try:
+                rtf_content = file_bytes.decode('utf-8')
+            except UnicodeDecodeError:
+                rtf_content = file_bytes.decode('latin-1')
+            return rtf_to_text(rtf_content).strip()
+        except Exception as e:
+            raise Exception(f"Error extracting text from RTF: {str(e)}")
     
     def clean_text(self, text: str) -> str:
         """

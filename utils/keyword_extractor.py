@@ -18,6 +18,30 @@ class KeywordExtractor:
     def __init__(self):
         self._setup_nltk()
         self.stop_words = set(stopwords.words('english'))
+        custom_stop_words = {
+            'remote', 'job', 'resume', 'compensation', 'qualifications', 'assessment', 'overview',
+            'options', 'help', 'project', 'candidate', 'candidates', 'employer', 'employers',
+            'experience', 'work', 'working', 'team', 'teams', 'role', 'roles', 'company', 'companies',
+            'position', 'positions', 'responsibilities', 'duties', 'requirements', 'skills',
+            'application', 'apply', 'employment', 'status', 'opportunity', 'opportunities',
+            'equal', 'benefits', 'salary', 'pay', 'bonus', 'insurance', 'vacation', 'leave',
+            'paid', 'time', 'off', 'flexible', 'schedule', 'hours', 'full-time', 'part-time',
+            'contract', 'temporary', 'internship', 'location', 'locations', 'office', 'offices',
+            'travel', 'required', 'preferred', 'desired', 'minimum', 'maximum', 'years', 'months',
+            'degree', 'diploma', 'education', 'university', 'college', 'school', 'schools',
+            'user', 'users', 'client', 'clients', 'customer', 'customers', 'service', 'services',
+            'product', 'products', 'support', 'technical', 'technology', 'technologies', 'system',
+            'systems', 'software', 'application', 'applications', 'program', 'programs', 'tool',
+            'tools', 'platform', 'platforms', 'framework', 'frameworks', 'library', 'libraries',
+            'environment', 'environments', 'development', 'developer', 'developers', 'engineer',
+            'engineers', 'engineering', 'manager', 'managers', 'management', 'lead', 'leader',
+            'leaders', 'leadership', 'teamwork', 'ability', 'abilities', 'capable', 'competent',
+            'expert', 'professional', 'professionals', 'industry', 'industries', 'field', 'fields',
+            'area', 'areas', 'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years',
+            'description', 'summary', 'detail', 'details', 'must', 'should', 'would', 'could',
+            'want', 'need', 'needs', 'require', 'requires', 'preferred', 'plus', 'nice'
+        }
+        self.stop_words.update(custom_stop_words)
         
         # Common technical skills and keywords
         self.technical_skills = {
@@ -79,6 +103,11 @@ class KeywordExtractor:
             nltk.data.find('tokenizers/punkt')
         except LookupError:
             nltk.download('punkt', quiet=True)
+        
+        try:
+            nltk.data.find('tokenizers/punkt_tab')
+        except LookupError:
+            nltk.download('punkt_tab', quiet=True)
         
         try:
             nltk.data.find('corpora/stopwords')
