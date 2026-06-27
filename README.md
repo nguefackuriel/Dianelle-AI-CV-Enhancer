@@ -159,7 +159,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 🔧 Configuration & Customization
+## Configuration & Customization
 
 * **Model Selection**: You can switch between any local Ollama models directly via the **Settings** page or by updating models in `utils/ollama_client.py`.
 * **Temperature Slider**: Control the creativity vs. strictness of the rewrites and responses under the **Settings** menu.
@@ -167,7 +167,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 🐞 Troubleshooting
+## Troubleshooting
 
 ### Ollama Connection Error
 * Ensure the Ollama server is running by executing `ollama list` in your terminal. If it fails, start it with `ollama serve`.
@@ -181,7 +181,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](file:///Users/urielnguefackyefou/Downloads/Dianelle-AI-CV-Enhancer/LICENSE) file for details.
 
