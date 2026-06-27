@@ -173,7 +173,6 @@ from utils.pdf_processor import PDFProcessor
 from utils.cv_analyzer import CVAnalyzer
 from utils.keyword_extractor import KeywordExtractor
 from utils.ollama_client import OllamaClient
-from utils.scoring_system import ScoringSystem
 from utils.job_matcher import JobMatcher
 from components.chat_interface import ChatInterface
 from components.improvement_suggestions import ImprovementSuggestions
@@ -667,9 +666,12 @@ def display_analysis_results(results):
     # AI Analysis
     ai = results.get('ai_analysis', {})
     ai_text = ai.get('analysis_text', '')
-    if ai_text and 'unavailable' not in ai_text.lower() and 'error' not in ai_text.lower():
-        with st.expander("Dianelle's AI Analysis", expanded=False):
-            st.markdown(ai_text)
+    if ai_text:
+        if 'unavailable' in ai_text.lower() or 'error' in ai_text.lower():
+            st.warning("⚠️ **Analyse IA Dianelle indisponible** : Impossible de contacter Ollama ou le modèle sélectionné. Vérifiez que le serveur local est actif (`ollama serve`) et que le modèle est installé.")
+        else:
+            with st.expander("Dianelle's AI Analysis", expanded=False):
+                st.markdown(ai_text)
 
     # Call to action
     st.markdown("---")
