@@ -1,10 +1,10 @@
-# Dianelle AI CV Enhancer — Land Your Dream Job
+# Dianelle AI CV Enhancer: Land Your Dream Job
 
-An advanced, privacy-first AI CV optimizer and career preparation platform. Dianelle AI helps job seekers create ATS-optimized, recruiter-winning resumes, prepare for interviews, generate tailored cover letters, and optimize their LinkedIn profiles. Built with **Streamlit** and local LLM integration using **Ollama**, ensuring 100% data privacy—no data ever leaves your machine.
+An advanced, privacy-first AI CV optimizer and career preparation platform. Dianelle AI helps job seekers create ATS-optimized, recruiter-winning resumes, prepare for interviews, generate tailored cover letters, and optimize their LinkedIn profiles. Built with **Streamlit** and local LLM integration using **Ollama**, ensuring 100% data privacy, no data ever leaves your machine.
 
 ---
 
-## 📸 Screenshots & Interface Gallery
+## Screenshots & Interface Gallery
 
 ### 1. Home Dashboard & Quick Start
 ![Home Page](assets/home_page.png)
@@ -29,7 +29,7 @@ An advanced, privacy-first AI CV optimizer and career preparation platform. Dian
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 ### 1. Smart CV Analysis & ATS Simulation
 * **ATS Compatibility Scoring**: Generates an instant, weighted score (0–100) based on:
@@ -78,7 +78,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 * **Frontend**: Streamlit (premium, dark-accented UI built with Inter font styling)
 * **Local AI**: Ollama (supports any model, default: `llama3.2`)
@@ -131,7 +131,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 运行 & Running the App
+## Running the App
 
 1. **Start the Ollama Local Server**:
    ```bash
@@ -151,7 +151,7 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 
 ---
 
-## 📋 Privacy & Privacy-First Architecture
+## Privacy & Privacy-First Architecture
 
 * **100% Offline Processing**: All file parsing, keyword scoring, analytics generation, and AI generation are executed locally.
 * **No Telemetry / API Keys**: You do not need external API keys (OpenAI, Anthropic, etc.). Everything runs within your local Ollama runtime.
