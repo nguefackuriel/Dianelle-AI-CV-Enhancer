@@ -67,17 +67,32 @@ class OllamaClient:
         Returns:
             str: Generated response
         """
+        # Determine target language from Streamlit session state
+        lang_full = st.session_state.get('language', 'Français')
+        lang = 'fr' if lang_full == 'Français' else 'en'
+        
         # Inject strict human-tone guidelines to avoid AI-generated styling and buzzwords
-        tone_guidelines = (
-            "\n\nCRITICAL WRITING STYLES DIRECTIVES:\n"
-            "- Write in a completely natural, professional, human tone.\n"
-            "- Avoid typical AI buzzwords, transitions, and phrases (e.g., 'delve', 'dive deep', 'tapestry', 'testament', "
-            "'moreover', 'furthermore', 'leverage', 'synergy', 'paradigm', 'robust', 'foster', 'beacon', 'revolutionize', "
-            "'cutting-edge', 'seamless', 'in conclusion').\n"
-            "- Use active voice, varied sentence lengths, and concrete verbs rather than flowery adjectives.\n"
-            "- Keep the writing direct, clean, and professional. Avoid fluff, filler, and dramatic intros/outros.\n"
-            "- Sound like a top-tier professional executive or an experienced career coach, not an AI language model."
-        )
+        if lang == 'fr':
+            tone_guidelines = (
+                "\n\nCRITICAL WRITING STYLES DIRECTIVES (DIRECTIVES D'ÉCRITURE CRITIQUES) :\n"
+                "- Rédigez toutes vos réponses, réécritures et analyses exclusivement en FRANÇAIS.\n"
+                "- Écrivez dans un ton naturel, professionnel et authentique de conseiller de carrière chevronné.\n"
+                "- Évitez les clichés de langage typiques de l'IA et les transitions artificielles (ex: 'de plus', 'en outre', 'en conclusion', 'tirer parti', 'synergie', 'levier', 'au cœur de', 'témoignage de').\n"
+                "- Utilisez la voix active, variez la longueur des phrases et privilégiez les verbes d'action concrets.\n"
+                "- Soyez direct et concis. Pas d'intro ou d'outro bavarde, pas de blabla ou d'émojis."
+            )
+        else:
+            tone_guidelines = (
+                "\n\nCRITICAL WRITING STYLES DIRECTIVES:\n"
+                "- Write all your responses, rewrites, and analyses exclusively in ENGLISH.\n"
+                "- Write in a completely natural, professional, human tone.\n"
+                "- Avoid typical AI buzzwords, transitions, and phrases (e.g., 'delve', 'dive deep', 'tapestry', 'testament', "
+                "'moreover', 'furthermore', 'leverage', 'synergy', 'paradigm', 'robust', 'foster', 'beacon', 'revolutionize', "
+                "'cutting-edge', 'seamless', 'in conclusion').\n"
+                "- Use active voice, varied sentence lengths, and concrete verbs rather than flowery adjectives.\n"
+                "- Keep the writing direct, clean, and professional. Avoid fluff, filler, and dramatic intros/outros.\n"
+                "- Sound like a top-tier professional executive or an experienced career coach, not an AI language model."
+            )
         prompt_with_tone = prompt + tone_guidelines
         
         try:

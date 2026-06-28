@@ -5,6 +5,7 @@ AI-powered negotiation script writer and follow-up email generator based on Hadr
 
 import streamlit as st
 from utils.ollama_client import OllamaClient
+from utils.translations import t
 
 
 class NegotiationFollowups:
@@ -15,19 +16,16 @@ class NegotiationFollowups:
 
     def display(self):
         """Display the Salary Negotiation & Follow-up page."""
-        st.markdown("## Negotiation & Follow-up Engine")
-        st.markdown(
-            "*Maximize your landing success. Dianelle writes market-backed salary negotiation scripts "
-            "and writes high-impact follow-up emails for every stage of the process.*"
-        )
+        st.markdown(f"## {t('neg_follow_title')}")
+        st.markdown(t('neg_follow_subtitle'))
 
         cv_text = st.session_state.get('cv_text', '')
         role_title = st.session_state.get('interview_role_title', '')
         company_name = st.session_state.get('interview_company_name', '')
 
         tabs = st.tabs([
-            "Salary Negotiation Script",
-            "Follow-up Email Templates",
+            t("tab_salary_negotiation"),
+            t("tab_followup_emails"),
         ])
 
         with tabs[0]:
@@ -42,49 +40,46 @@ class NegotiationFollowups:
 
     def _salary_negotiation_tab(self, default_role: str, default_company: str):
         """Salary negotiation scripts and strategy (Step 7)."""
-        st.markdown("### Salary Negotiation Strategy (Hadrien's Formula)")
-        st.markdown(
-            "Almost all job offers have negotiation room. Recruiters expect you to negotiate. "
-            "Enter details of the offer you received below to generate custom negotiation scripts."
-        )
+        st.markdown(f"### {t('salary_neg_title')}")
+        st.markdown(t('salary_neg_desc'))
 
         col1, col2 = st.columns(2)
         with col1:
             role_title = st.text_input(
-                "Job Title:",
+                t("role_title_label"),
                 value=default_role,
                 placeholder="e.g., Senior Frontend Engineer",
                 key="neg_role_title"
             )
             company_name = st.text_input(
-                "Company Name:",
+                t("company_name_label"),
                 value=default_company,
                 placeholder="e.g., Tesla",
                 key="neg_company_name"
             )
             base_salary = st.text_input(
-                "Base Salary Offered:",
+                t("base_salary_label"),
                 placeholder="e.g., $95,000 / year"
             )
         with col2:
             bonus = st.text_input(
-                "Annual Bonus Structure (optional):",
+                t("bonus_label"),
                 placeholder="e.g., 10% performance bonus"
             )
             equity = st.text_input(
-                "Equity / RSU / Options (optional):",
+                t("equity_label"),
                 placeholder="e.g., $20,000 stock options vested over 4 years"
             )
             benefits = st.text_input(
-                "Other Benefits (optional):",
+                t("benefits_label"),
                 placeholder="e.g., 25 days PTO, healthcare, 4% match"
             )
 
-        if st.button("Generate Negotiation Pack", type="primary", key="gen_negotiation_btn"):
+        if st.button(t("gen_negotiation_btn"), type="primary", key="gen_negotiation_btn"):
             if not role_title or not company_name:
-                st.warning("Please fill in Job Title and Company Name.")
+                st.warning(t("fill_role_company_warning"))
                 return
-            with st.spinner("Analyzing offer and drafting scripts..."):
+            with st.spinner(t("analyzing_offer_spinner")):
                 try:
                     if self.ollama_client.is_connected():
                         result = self.ollama_client.generate_salary_negotiation(
@@ -98,17 +93,17 @@ class NegotiationFollowups:
 
         if 'linkedin_salary_negotiation' in st.session_state:
             st.markdown("---")
-            st.markdown("### Your Custom Negotiation Plan")
+            st.markdown(t("custom_neg_plan_title"))
             
             negotiation_text = st.text_area(
-                "Negotiation Pack Details:",
+                t("neg_pack_details_label"),
                 st.session_state['linkedin_salary_negotiation'],
                 height=400,
                 key="edit_negotiation_pack"
             )
             
             st.download_button(
-                "Download Negotiation Script",
+                t("download_neg_script_btn"),
                 negotiation_text,
                 file_name=f"negotiation_script_{company_name}.txt",
                 mime="text/plain"
@@ -120,37 +115,34 @@ class NegotiationFollowups:
 
     def _followup_emails_tab(self, cv_text: str, default_role: str, default_company: str):
         """Create 3 follow-up email templates (Step 9)."""
-        st.markdown("### Follow-up Email Templates")
-        st.markdown(
-            "Relancing keeps you top of mind. Generating 3 templates: post-application (3 days, <60 words), "
-            "thank-you email (24h, <100 words), and check-in relance (7 days, <80 words). No emojis."
-        )
+        st.markdown(f"### {t('followup_emails_title')}")
+        st.markdown(t('followup_emails_desc'))
 
         col1, col2 = st.columns(2)
         with col1:
             role_title = st.text_input(
-                "Job Title:",
+                t("role_title_label"),
                 value=default_role,
                 placeholder="e.g., Product Manager",
                 key="follow_role_title"
             )
             company_name = st.text_input(
-                "Company Name:",
+                t("company_name_label"),
                 value=default_company,
                 placeholder="e.g., Stripe",
                 key="follow_company_name"
             )
         with col2:
             interviewer_name = st.text_input(
-                "Interviewer Name (optional):",
+                t("interviewer_name_label"),
                 placeholder="e.g., Sarah Jenkins"
             )
 
-        if st.button("Generate Follow-up Emails", type="primary", key="gen_followup_btn"):
+        if st.button(t("gen_followup_btn"), type="primary", key="gen_followup_btn"):
             if not role_title or not company_name:
-                st.warning("Please fill in Job Title and Company Name.")
+                st.warning(t("fill_role_company_warning"))
                 return
-            with st.spinner("Drafting follow-ups..."):
+            with st.spinner(t("drafting_followup_spinner")):
                 try:
                     if self.ollama_client.is_connected():
                         result = self.ollama_client.generate_followup_emails(
@@ -164,17 +156,17 @@ class NegotiationFollowups:
 
         if 'linkedin_followup_emails' in st.session_state:
             st.markdown("---")
-            st.markdown("### Generated Email Templates")
+            st.markdown(t("gen_email_templates_title"))
             
             emails_text = st.text_area(
-                "Email Templates Details:",
+                t("email_templates_details_label"),
                 st.session_state['linkedin_followup_emails'],
                 height=350,
                 key="edit_followup_emails"
             )
             
             st.download_button(
-                "Download Emails",
+                t("download_emails_btn"),
                 emails_text,
                 file_name=f"followup_emails_{company_name}.txt",
                 mime="text/plain"

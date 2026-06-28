@@ -7,6 +7,7 @@ based on CV analysis and job description.
 import streamlit as st
 from typing import Dict, List, Any
 from utils.ollama_client import OllamaClient
+from utils.translations import t
 
 
 class InterviewPrep:
@@ -17,14 +18,11 @@ class InterviewPrep:
 
     def display(self):
         """Display the interview preparation page."""
-        st.markdown("## Interview Preparation")
-        st.markdown(
-            "*Dianelle helps you prepare for interviews by generating likely questions, "
-            "building STAR responses, and crafting your elevator pitch.*"
-        )
+        st.markdown(f"## {t('interview_prep_title')}")
+        st.markdown(t('interview_prep_subtitle'))
 
         if not st.session_state.get('cv_text'):
-            st.warning("Please upload your CV first on the **CV Analysis** page.")
+            st.warning(t("please_upload_first"))
             return
 
         cv_text = st.session_state['cv_text']
@@ -32,31 +30,31 @@ class InterviewPrep:
         analysis = st.session_state.get('analysis_results', {})
 
         # Role and Company inputs for customization
-        st.markdown("### Target Role Details")
+        st.markdown(f"### {t('target_role_details')}")
         col1, col2 = st.columns(2)
         with col1:
             company_name = st.text_input(
-                "Company Name:",
+                t("company_name_label"),
                 value=st.session_state.get('interview_company_name', ''),
-                placeholder="e.g., Google, Stripe, Tesla",
+                placeholder=t("company_name_placeholder"),
                 key="interview_company_input"
             )
             st.session_state['interview_company_name'] = company_name
         with col2:
             role_title = st.text_input(
-                "Job Title:",
+                t("role_title_label"),
                 value=st.session_state.get('interview_role_title', ''),
-                placeholder="e.g., Senior Software Engineer",
+                placeholder=t("role_title_placeholder"),
                 key="interview_role_input"
             )
             st.session_state['interview_role_title'] = role_title
 
         tabs = st.tabs([
-            "Complete Prep Pack",
-            "Interactive Mock Interview",
-            "STAR Response Builder",
-            "Behavioral & Tech Questions",
-            "Elevator Pitch & Framing",
+            t("tab_complete_prep"),
+            t("tab_mock_interview"),
+            t("tab_star_builder"),
+            t("tab_behavioral_tech"),
+            t("tab_elevator_pitch_framing"),
         ])
 
         with tabs[0]:
@@ -89,7 +87,7 @@ class InterviewPrep:
             if questions:
                 for i, q in enumerate(questions, 1):
                     with st.expander(f"Q{i}: {q['question']}", expanded=(i <= 3)):
-                        st.markdown(f"**Why they'll ask this:** {q['reason']}")
+                        st.markdown(t("why_ask_label", reason=q['reason']))
                         st.markdown(f"**Suggested approach:** {q['approach']}")
                         if q.get('sample_answer'):
                             st.markdown(f"**Sample answer framework:** {q['sample_answer']}")
@@ -100,7 +98,7 @@ class InterviewPrep:
 
     def _star_builder(self, cv_text: str, job_description: str):
         """Interactive STAR response builder."""
-        st.markdown("### STAR Response Builder")
+        st.markdown(f"### {t('tab_star_builder')}")
         st.markdown(
             "Structure your answers using the **S**ituation → **T**ask → **A**ction → **R**esult framework."
         )
@@ -155,17 +153,17 @@ class InterviewPrep:
 
     def _behavioral_questions(self, cv_text: str, job_description: str):
         """Generate role-specific behavioral questions."""
-        st.markdown("### Behavioral Questions")
-        st.markdown("These questions assess your soft skills and past behavior.")
+        st.markdown(f"### {t('behavioral_questions_title')}")
+        st.markdown(t('behavioral_questions_desc'))
 
         category = st.selectbox(
-            "Focus area:",
+            t("focus_area_label"),
             ['Leadership', 'Teamwork', 'Problem Solving', 'Conflict Resolution',
              'Adaptability', 'Communication', 'Time Management', 'All'],
         )
 
-        if st.button("Generate Behavioral Questions", type="primary", key="gen_behavioral"):
-            with st.spinner("Generating questions..."):
+        if st.button(t("gen_behavioral_btn"), type="primary", key="gen_behavioral"):
+            with st.spinner(t("generating_questions_spinner")):
                 questions = self._generate_behavioral_questions(
                     cv_text, job_description, category
                 )
@@ -178,7 +176,7 @@ class InterviewPrep:
                     st.markdown(f"""
                     <div style="padding: 0.8rem; border-left: 4px solid #7c4dff; background: #f3e8ff; margin: 0.5rem 0; border-radius: 4px;">
                         <strong>Q{i}:</strong> {q}<br>
-                        <small style="color: #666;">Use the STAR method to structure your answer</small>
+                        <small style="color: #666;">{t('star_method_caption')}</small>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -188,25 +186,25 @@ class InterviewPrep:
 
     def _technical_questions(self, cv_text: str, job_description: str, analysis: Dict):
         """Generate technical questions based on required skills."""
-        st.markdown("### Technical Questions")
-        st.markdown("Prepare for technical questions based on the job's required skills.")
+        st.markdown(f"### {t('technical_questions_title')}")
+        st.markdown(t('technical_questions_desc'))
 
         tech_skills = analysis.get('technical_skills_match', []) + analysis.get('missing_technical_skills', [])
 
         if not tech_skills:
-            st.info("No specific technical skills detected. Add a job description for targeted questions.")
+            st.info(t("no_tech_skills_detected"))
             tech_skills = ['general']
 
-        selected_skill = st.selectbox("Focus on skill:", tech_skills[:15])
+        selected_skill = st.selectbox(t("focus_skill_label"), tech_skills[:15])
 
         difficulty = st.select_slider(
-            "Difficulty level:",
+            t("difficulty_level_label"),
             options=['Basic', 'Intermediate', 'Advanced'],
             value='Intermediate',
         )
 
-        if st.button("Generate Technical Questions", type="primary", key="gen_tech"):
-            with st.spinner("Generating technical questions..."):
+        if st.button(t("gen_technical_btn"), type="primary", key="gen_tech"):
+            with st.spinner(t("generating_tech_spinner")):
                 questions = self._generate_technical_questions(
                     selected_skill, difficulty, job_description
                 )
@@ -228,23 +226,23 @@ class InterviewPrep:
 
     def _elevator_pitch(self, cv_text: str, job_description: str):
         """Generate elevator pitches."""
-        st.markdown("### Elevator Pitch Generator")
-        st.markdown("Craft a compelling personal pitch for networking and interviews.")
+        st.markdown(f"### {t('elevator_pitch_title')}")
+        st.markdown(t('elevator_pitch_desc'))
 
         col1, col2 = st.columns(2)
         with col1:
             pitch_length = st.selectbox(
-                "Pitch length:",
+                t("pitch_length_label"),
                 ['30 seconds (~75 words)', '60 seconds (~150 words)', '90 seconds (~225 words)'],
             )
         with col2:
             context = st.selectbox(
-                "Context:",
+                t("context_label"),
                 ['Job Interview', 'Networking Event', 'Career Fair', 'LinkedIn Message'],
             )
 
-        if st.button("Generate Pitch", type="primary", key="gen_pitch"):
-            with st.spinner("Crafting your elevator pitch..."):
+        if st.button(t("gen_pitch_btn"), type="primary", key="gen_pitch"):
+            with st.spinner(t("generating_pitch_spinner")):
                 pitch = self._generate_elevator_pitch(
                     cv_text, job_description, pitch_length, context
                 )
@@ -252,7 +250,7 @@ class InterviewPrep:
 
         if 'interview_elevator_pitch' in st.session_state:
             pitch = st.session_state['interview_elevator_pitch']
-            st.markdown("#### Your Elevator Pitch:")
+            st.markdown(t("your_elevator_pitch_title"))
             st.markdown(f"""
             <div style="padding: 1.5rem; background: linear-gradient(135deg, #667eea20, #764ba220); border-radius: 10px; border: 1px solid #667eea40;">
                 {pitch}
@@ -263,7 +261,7 @@ class InterviewPrep:
             st.caption(f"{word_count} words")
 
             st.download_button(
-                "Download Pitch",
+                t("download_pitch_btn"),
                 pitch,
                 file_name="elevator_pitch.txt",
                 mime="text/plain",
@@ -275,8 +273,8 @@ class InterviewPrep:
 
     def _weakness_strength_framing(self, cv_text: str, analysis: Dict):
         """Help frame weaknesses as growth opportunities."""
-        st.markdown("### Weakness/Strength Framing")
-        st.markdown("Turn CV gaps into compelling growth narratives.")
+        st.markdown(f"### {t('weakness_framing_title')}")
+        st.markdown(t('weakness_framing_desc'))
 
         gaps = analysis.get('missing_keywords', [])[:5]
         missing_skills = analysis.get('missing_technical_skills', [])[:5]
@@ -284,24 +282,24 @@ class InterviewPrep:
         all_gaps = gaps + missing_skills
 
         if all_gaps:
-            st.warning(f"**Potential interview concerns (based on CV gaps):** {', '.join(all_gaps[:8])}")
+            st.warning(t("potential_interview_concerns", gaps=', '.join(all_gaps[:8])))
 
         weakness = st.text_input(
-            "Enter a weakness or gap to frame positively:",
-            placeholder="e.g., No experience with Kubernetes, Career gap in 2023...",
+            t("enter_weakness_label"),
+            placeholder=t("enter_weakness_placeholder"),
         )
 
-        if st.button("Frame It Positively", type="primary", key="frame_weakness"):
+        if st.button(t("frame_it_btn"), type="primary", key="frame_weakness"):
             if not weakness.strip():
                 st.warning("Please enter a weakness to frame.")
                 return
 
-            with st.spinner("Crafting your response..."):
+            with st.spinner(t("crafting_response_spinner")):
                 framing = self._frame_weakness(weakness, cv_text)
                 st.session_state['interview_weakness_framing'] = framing
 
         if 'interview_weakness_framing' in st.session_state:
-            st.markdown("#### Positive Framing:")
+            st.markdown(t("positive_framing_title"))
             st.success(st.session_state['interview_weakness_framing'])
 
     # ------------------------------------------------------------------
@@ -537,16 +535,16 @@ Write a natural, conversational interview response (~100 words):"""
 
     def _complete_prep_pack(self, cv_text: str, job_description: str, company_name: str, role_title: str):
         """Generate a complete prep pack (company research, 10 predicted questions with traps/STAR answers, and questions to ask)."""
-        st.markdown("### Recruiter Prep Pack")
-        st.markdown("Generate a complete target company research brief, predicted questions with traps, and questions to ask.")
+        st.markdown(f"### {t('recruiter_prep_pack')}")
+        st.markdown(t('recruiter_prep_pack_desc'))
         
         # Verify inputs
         if not company_name or not role_title:
-            st.info("Please fill in the Company Name and Job Title at the top to generate a personalized Prep Pack.")
+            st.info(t("fill_role_details_info"))
             return
 
-        if st.button("Generate Prep Pack", type="primary", key="gen_prep_pack"):
-            with st.spinner("Analyzing target company and predicting questions..."):
+        if st.button(t("gen_prep_pack_btn"), type="primary", key="gen_prep_pack"):
+            with st.spinner(t("analyzing_company_spinner")):
                 prompt = f"""You are Dianelle, an expert career coach and corporate headhunter.
 Help me prepare for my interview for the position "{role_title}" at "{company_name}".
 
@@ -596,26 +594,26 @@ Format the section headers EXACTLY as:
             parts = self._parse_prep_pack(raw_pack)
             
             # Display Research
-            st.markdown("#### Company Business & Research Brief")
+            st.markdown(t("company_research_brief_title"))
             st.info(parts['research'] or "Research brief not found.")
             
             # Display Questions
-            st.markdown("#### 10 Predicted Questions with Traps & STAR Answers")
+            st.markdown(t("predicted_questions_title"))
             if parts['questions']:
                 parsed_qs = self._parse_individual_questions(parts['questions'])
                 if parsed_qs:
                     for i, q in enumerate(parsed_qs, 1):
                         with st.expander(f"Q{i}: {q['question']}", expanded=(i <= 2)):
-                            st.markdown(f"**Why they ask this:** {q['reason']}")
-                            st.warning(f"**The Trap:** {q['trap']}")
-                            st.success(f"**Strong STAR Answer:** {q['answer']}")
+                            st.markdown(t("why_ask_label", reason=q['reason']))
+                            st.warning(t("trap_label", trap=q['trap']))
+                            st.success(t("strong_star_answer_label", answer=q['answer']))
                 else:
                     st.markdown(parts['questions'])
             else:
                 st.info("Questions content not found.")
                 
             # Display Questions to Ask
-            st.markdown("#### 5 Business-Savvy Questions to Ask Them")
+            st.markdown(t("questions_to_ask_them_title"))
             st.markdown(parts['to_ask'] or "Questions to ask not found.")
 
     def _parse_prep_pack(self, response: str) -> Dict[str, str]:
@@ -668,12 +666,12 @@ Format the section headers EXACTLY as:
 
     def _mock_interview(self, cv_text: str, job_description: str, company_name: str, role_title: str):
         """Interactive Mock Interview chatbot tab."""
-        st.markdown("### Interactive Mock Interview Coach")
-        st.markdown("Practice your responses in real-time with Dianelle acting as your interviewer.")
+        st.markdown(f"### {t('mock_interview_title')}")
+        st.markdown(t('mock_interview_desc'))
         
         # Verify inputs
         if not company_name or not role_title:
-            st.info("Please fill in the Company Name and Job Title at the top to start the Mock Interview.")
+            st.info(t("mock_fill_details_info"))
             return
 
         if 'mock_chat_history' not in st.session_state:
@@ -690,8 +688,8 @@ Format the section headers EXACTLY as:
 
         # Start button
         if not st.session_state['mock_chat_history']:
-            if st.button("Start Mock Interview", type="primary", key="start_mock_btn"):
-                with st.spinner("Setting up the interview room..."):
+            if st.button(t("start_mock_btn"), type="primary", key="start_mock_btn"):
+                with st.spinner(t("setting_up_room_spinner")):
                     prompt = f"""You are Dianelle, an expert recruiter conducting a 15-minute mock interview for the position "{role_title}" at "{company_name}".
 Please welcome the candidate, state the role, and ask the first question based on their CV and target job requirements. Ask ONLY one question.
 
@@ -711,7 +709,7 @@ Job Description: {job_description[:800]}
 
         # Chat input (only if active)
         if st.session_state['mock_chat_history']:
-            user_response = st.chat_input("Type your response here...", key="mock_chat_input")
+            user_response = st.chat_input(t("mock_chat_placeholder"), key="mock_chat_input")
             if user_response:
                 st.session_state['mock_chat_history'].append({
                     'role': 'user',
@@ -723,7 +721,7 @@ Job Description: {job_description[:800]}
                 for msg in st.session_state['mock_chat_history']:
                     history_str += f"{msg['role'].upper()}: {msg['content']}\n\n"
                 
-                with st.spinner("Evaluating response and generating feedback..."):
+                with st.spinner(t("evaluating_mock_spinner")):
                     prompt = f"""You are Dianelle, an expert recruiter conducting a mock interview for the position "{role_title}" at "{company_name}".
 The candidate has just answered your question.
 
@@ -749,7 +747,7 @@ Here is the conversation history:
                     except Exception as e:
                         st.error(f"Error generating feedback: {str(e)}")
 
-            if st.button("Reset Interview", key="reset_mock_btn"):
+            if st.button(t("reset_interview_btn"), key="reset_mock_btn"):
                 st.session_state['mock_chat_history'] = []
                 st.rerun()
 

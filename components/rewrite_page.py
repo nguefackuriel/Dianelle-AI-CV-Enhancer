@@ -6,6 +6,7 @@ Interactive UI for AI-powered CV rewriting with before/after comparison.
 import streamlit as st
 from typing import Dict, List, Any
 from utils.rewrite_engine import RewriteEngine
+from utils.translations import t
 
 
 class RewritePage:
@@ -16,19 +17,16 @@ class RewritePage:
 
     def display(self):
         """Display the rewrite page."""
-        st.markdown("## AI CV Rewriter — Powered by Dianelle")
-        st.markdown(
-            "*Transform your CV into an ATS-optimized powerhouse. "
-            "Dianelle rewrites your sections while keeping everything truthful.*"
-        )
+        st.markdown(f"## {t('rewrite_title')}")
+        st.markdown(t('rewrite_subtitle'))
 
         # Check prerequisites
         if not st.session_state.get('cv_text'):
-            st.warning("Please upload and analyze your CV first on the **CV Analysis** page!")
+            st.warning(t("please_upload_analyze_first_rewrite"))
             return
 
         if not st.session_state.get('analysis_results'):
-            st.warning("Please run the CV analysis first to get personalized rewrites!")
+            st.warning(t("please_run_analysis_first"))
             return
 
         cv_text = st.session_state['cv_text']
@@ -44,13 +42,13 @@ class RewritePage:
 
         # Tab layout for different rewrite features
         tabs = st.tabs([
-            "Section Rewriter",
-            "Bullet Optimizer",
-            "Summary Generator",
-            "Skills Optimizer",
-            "Weak Language Scan",
-            "Quantification Helper",
-            "ATS & Recruiter Double Test",
+            t("tab_section_rewriter"),
+            t("tab_bullet_optimizer"),
+            t("tab_summary_generator"),
+            t("tab_skills_optimizer"),
+            t("tab_weak_language_scan"),
+            t("tab_quantification_helper"),
+            t("tab_double_test"),
         ])
 
         with tabs[0]:
@@ -87,19 +85,19 @@ class RewritePage:
             score_color = "#00c851" if score >= 80 else "#ffa500" if score >= 60 else "#ff4b4b"
             st.markdown(f"""
             <div style="background: {score_color}; padding: 1rem; border-radius: 10px; text-align: center; color: white;">
-                <h3 style="margin:0; color:white;">Current ATS Score</h3>
+                <h3 style="margin:0; color:white;">{t('current_ats_score')}</h3>
                 <h1 style="margin:0; color:white;">{score}/100</h1>
             </div>
             """, unsafe_allow_html=True)
 
         with col2:
             missing = len(analysis.get('missing_keywords', []))
-            st.metric("Missing Keywords", missing, delta=f"-{missing}" if missing else "0")
+            st.metric(t("missing_keywords"), missing, delta=f"-{missing}" if missing else "0")
 
         with col3:
             improvement = 100 - score
-            st.metric("Improvement Potential", f"+{improvement} pts",
-                       delta=f"{improvement} points available")
+            st.metric(t("improvement_potential"), f"+{improvement} pts",
+                       delta=t("points_available", improvement=improvement))
 
     # ------------------------------------------------------------------
     # Section Rewriter
@@ -108,11 +106,11 @@ class RewritePage:
     def _section_rewriter(self, parsed_sections: Dict, job_description: str,
                           missing_keywords: List[str], cv_text: str):
         """Section-by-section rewriting interface."""
-        st.markdown("### Section-by-Section Rewriter")
-        st.markdown("Select sections to rewrite. Dianelle will optimize each one for ATS compatibility.")
+        st.markdown(f"### {t('section_rewriter_title')}")
+        st.markdown(t('section_rewriter_desc'))
 
         if not parsed_sections or len(parsed_sections) <= 1:
-            st.info("No distinct sections detected. Using full CV text instead.")
+            st.info(t('no_distinct_sections'))
             parsed_sections = {'full_cv': cv_text}
 
         # Section selection
@@ -121,23 +119,24 @@ class RewritePage:
             available_sections = list(parsed_sections.keys())
 
         selected_sections = st.multiselect(
-            "Choose sections to rewrite:",
+            t("choose_sections_to_rewrite"),
             available_sections,
             default=available_sections[:2] if len(available_sections) >= 2 else available_sections,
         )
 
         col1, col2 = st.columns([1, 1])
         with col1:
-            tone = st.selectbox("Tone:", ["professional", "confident", "concise"])
+            tone = st.selectbox(t("tone_label"), ["professional", "confident", "concise"])
         with col2:
-            st.markdown(f"**Missing keywords to inject:** {', '.join(missing_keywords[:8]) if missing_keywords else 'None'}")
+            kws = ', '.join(missing_keywords[:8]) if missing_keywords else 'None'
+            st.markdown(t("missing_keywords_to_inject", keywords=kws))
 
-        if st.button("Rewrite Selected Sections", type="primary", use_container_width=True):
+        if st.button(t("rewrite_selected_btn"), type="primary", use_container_width=True):
             if not selected_sections:
-                st.warning("Please select at least one section.")
+                st.warning(t("please_select_one_section"))
                 return
 
-            with st.spinner("Dianelle is rewriting your CV sections..."):
+            with st.spinner(t("dianelle_rewriting_spinner")):
                 results = self.rewrite_engine.rewrite_all_sections(
                     {s: parsed_sections[s] for s in selected_sections},
                     job_description,
@@ -154,16 +153,16 @@ class RewritePage:
     def _display_rewrite_results(self, results: Dict[str, Dict]):
         """Display before/after comparison for each section."""
         st.markdown("---")
-        st.markdown("### Rewrite Results")
+        st.markdown(f"### {t('rewrite_results_title')}")
 
         for section_name, result in results.items():
             with st.expander(f"{section_name.replace('_', ' ').title()}", expanded=True):
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.markdown("**Original**")
+                    st.markdown(f"**{t('original')}**")
                     st.text_area(
-                        "Original",
+                        t("original"),
                         result['original'],
                         height=200,
                         disabled=True,
@@ -172,9 +171,9 @@ class RewritePage:
                     )
 
                 with col2:
-                    st.markdown("**Enhanced**")
+                    st.markdown(f"**{t('enhanced')}**")
                     edited = st.text_area(
-                        "Enhanced",
+                        t("enhanced"),
                         result['rewritten'],
                         height=200,
                         key=f"new_{section_name}",
@@ -183,38 +182,39 @@ class RewritePage:
 
                 # Changes summary
                 if result['changes_made']:
-                    st.markdown("**Changes made:**")
+                    st.markdown(f"**{t('changes_made')}**")
                     for change in result['changes_made']:
                         st.markdown(f"- {change}")
 
                 if result['keywords_added']:
-                    st.success(f"Keywords added: {', '.join(result['keywords_added'])}")
+                    kws = ', '.join(result['keywords_added'])
+                    st.success(t("keywords_added", keywords=kws))
 
                 # Action buttons
                 bcol1, bcol2, bcol3 = st.columns(3)
                 with bcol1:
-                    if st.button("Accept", key=f"accept_{section_name}"):
+                    if st.button(t("accept_btn"), key=f"accept_{section_name}"):
                         if 'accepted_rewrites' not in st.session_state:
                             st.session_state['accepted_rewrites'] = {}
                         st.session_state['accepted_rewrites'][section_name] = edited
-                        st.success(f"Accepted rewrite for {section_name}!")
+                        st.success(t("accepted_success", section=section_name))
 
                 with bcol2:
-                    if st.button("Reject", key=f"reject_{section_name}"):
-                        st.info(f"Keeping original {section_name}.")
+                    if st.button(t("reject_btn"), key=f"reject_{section_name}"):
+                        st.info(t("keeping_original", section=section_name))
 
                 with bcol3:
-                    if st.button("Re-generate", key=f"regen_{section_name}"):
-                        st.info("Re-generating... Please click 'Rewrite Selected Sections' again.")
+                    if st.button(t("regenerate_btn"), key=f"regen_{section_name}"):
+                        st.info(t("regenerating_info"))
 
         # Apply All button
         st.markdown("---")
-        if st.button("Accept All Rewrites", type="primary", use_container_width=True):
+        if st.button(t("accept_all_rewrites_btn"), type="primary", use_container_width=True):
             if 'accepted_rewrites' not in st.session_state:
                 st.session_state['accepted_rewrites'] = {}
             for section_name, result in results.items():
                 st.session_state['accepted_rewrites'][section_name] = result['rewritten']
-            st.success("All rewrites accepted! Go to **Export** to download your enhanced CV.")
+            st.success(t("all_rewrites_accepted"))
             st.balloons()
 
     # ------------------------------------------------------------------
@@ -223,21 +223,21 @@ class RewritePage:
 
     def _bullet_optimizer(self, cv_text: str, job_description: str):
         """Optimize individual bullet points."""
-        st.markdown("### Bullet Point Optimizer")
-        st.markdown("Paste bullet points from your experience section to optimize them individually.")
+        st.markdown(f"### {t('bullet_optimizer_title')}")
+        st.markdown(t('bullet_optimizer_desc'))
 
         bullets_input = st.text_area(
-            "Enter your bullet points (one per line):",
+            t("enter_bullets"),
             height=200,
             placeholder="- Responsible for managing the team\n- Helped with project delivery\n- Worked on improving processes",
         )
 
-        if st.button("Optimize Bullets", type="primary"):
+        if st.button(t("optimize_bullets_btn"), type="primary"):
             if not bullets_input.strip():
-                st.warning("Please enter some bullet points.")
+                st.warning(t("please_enter_bullets"))
                 return
 
-            with st.spinner("Optimizing bullet points..."):
+            with st.spinner(t("optimizing_bullets_spinner")):
                 results = self.rewrite_engine.optimize_bullets(bullets_input, job_description)
                 st.session_state['bullet_optimizer_results'] = results
 
@@ -249,10 +249,10 @@ class RewritePage:
                     col1, col2 = st.columns(2)
 
                     with col1:
-                        st.markdown(f"*Original:* {result['original']}")
+                        st.markdown(t("bullet_original", text=result['original']))
 
                     with col2:
-                        st.markdown(f"*Optimized:* {result['optimized']}")
+                        st.markdown(t("bullet_optimized", text=result['optimized']))
 
                     if result['improvement_notes']:
                         for note in result['improvement_notes']:
@@ -266,34 +266,34 @@ class RewritePage:
 
     def _summary_generator(self, cv_text: str, job_description: str, analysis: Dict):
         """Generate professional summary."""
-        st.markdown("### Professional Summary Generator")
-        st.markdown("Generate an ATS-optimized professional summary tailored to the job.")
+        st.markdown(f"### {t('summary_generator_title')}")
+        st.markdown(t('summary_generator_desc'))
 
         col1, col2 = st.columns(2)
         with col1:
-            years = st.number_input("Years of Experience:", min_value=0, max_value=50, value=5)
+            years = st.number_input(t("years_exp"), min_value=0, max_value=50, value=5)
         with col2:
-            st.info("A strong summary is one of the most impactful ATS elements.")
+            st.info(t("summary_info"))
 
-        if st.button("Generate Summary", type="primary"):
-            with st.spinner("Crafting your professional summary..."):
+        if st.button(t("generate_summary_btn"), type="primary"):
+            with st.spinner(t("generating_summary_spinner")):
                 summary = self.rewrite_engine.generate_summary(cv_text, job_description, years)
                 st.session_state['generated_summary_result'] = summary
 
         if 'generated_summary_result' in st.session_state:
-            st.markdown("**Generated Professional Summary:**")
+            st.markdown(t("generated_summary_title"))
             edited_summary = st.text_area(
-                "Edit your summary:",
+                t("edit_summary"),
                 st.session_state['generated_summary_result'],
                 height=120,
                 key="generated_summary_edit",
             )
 
-            if st.button("Use This Summary", key="use_summary_btn"):
+            if st.button(t("use_summary_btn"), key="use_summary_btn"):
                 if 'accepted_rewrites' not in st.session_state:
                     st.session_state['accepted_rewrites'] = {}
                 st.session_state['accepted_rewrites']['summary'] = edited_summary
-                st.success("Summary saved!")
+                st.success(t("summary_saved"))
 
     # ------------------------------------------------------------------
     # Skills Optimizer
@@ -301,13 +301,13 @@ class RewritePage:
 
     def _skills_optimizer(self, parsed_sections: Dict, job_description: str, analysis: Dict):
         """Optimize skills section."""
-        st.markdown("### Skills Section Optimizer")
-        st.markdown("Reorganize and optimize your skills to match the job requirements.")
+        st.markdown(f"### {t('skills_optimizer_title')}")
+        st.markdown(t('skills_optimizer_desc'))
 
         current_skills = parsed_sections.get('skills', '')
         if not current_skills:
             current_skills = st.text_area(
-                "Enter your current skills:",
+                t("enter_skills"),
                 height=150,
                 placeholder="Python, Java, SQL, Project Management, Team Leadership...",
             )
@@ -316,14 +316,14 @@ class RewritePage:
         missing = analysis.get('missing_technical_skills', [])
 
         if missing:
-            st.warning(f"Missing technical skills: {', '.join(missing[:10])}")
+            st.warning(t("missing_tech_skills", skills=', '.join(missing[:10])))
 
-        if st.button("Optimize Skills", type="primary"):
+        if st.button(t("optimize_skills_btn"), type="primary"):
             if not current_skills:
-                st.warning("Please enter your skills.")
+                st.warning(t("please_enter_skills"))
                 return
 
-            with st.spinner("Optimizing skills section..."):
+            with st.spinner(t("optimizing_skills_spinner")):
                 result = self.rewrite_engine.optimize_skills(
                     current_skills, job_description, matched, missing
                 )
@@ -333,22 +333,22 @@ class RewritePage:
             result = st.session_state['optimized_skills_result']
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown("**Current Skills**")
+                st.markdown(t("current_skills_label"))
                 st.text_area("Current", result['original'], height=200,
                              disabled=True, key="skills_orig", label_visibility="collapsed")
             with col2:
-                st.markdown("**Optimized Skills**")
+                st.markdown(t("optimized_skills_label"))
                 edited = st.text_area("Optimized", result['optimized'], height=200,
                                        key="skills_new", label_visibility="collapsed")
 
             if result['skills_added']:
-                st.success(f"Skills integrated: {', '.join(result['skills_added'])}")
+                st.success(t("skills_integrated", skills=', '.join(result['skills_added'])))
 
-            if st.button("Accept Skills", key="accept_skills_btn"):
+            if st.button(t("accept_skills_btn"), key="accept_skills_btn"):
                 if 'accepted_rewrites' not in st.session_state:
                     st.session_state['accepted_rewrites'] = {}
                 st.session_state['accepted_rewrites']['skills'] = edited
-                st.success("Skills section saved!")
+                st.success(t("skills_saved"))
 
     # ------------------------------------------------------------------
     # Weak Language Scan
@@ -356,11 +356,11 @@ class RewritePage:
 
     def _weak_language_scan(self, cv_text: str):
         """Scan for and highlight weak language."""
-        st.markdown("### Weak Language Scanner")
-        st.markdown("Find and replace passive, weak language with powerful action-driven alternatives.")
+        st.markdown(f"### {t('weak_language_title')}")
+        st.markdown(t('weak_language_desc'))
 
-        if st.button("Scan CV", type="primary"):
-            with st.spinner("Scanning CV..."):
+        if st.button(t("scan_cv_btn"), type="primary"):
+            with st.spinner(t("scanning_cv_spinner")):
                 findings = self.rewrite_engine.detect_weak_language(cv_text)
                 st.session_state['weak_language_results'] = findings
                 st.session_state['weak_language_scanned'] = True
@@ -368,10 +368,10 @@ class RewritePage:
         if st.session_state.get('weak_language_scanned'):
             findings = st.session_state.get('weak_language_results', [])
             if not findings:
-                st.success("Great job! No weak language patterns detected.")
+                st.success(t("no_weak_language"))
                 return
 
-            st.warning(f"Found {len(findings)} weak phrase(s) to improve:")
+            st.warning(t("weak_phrases_found", count=len(findings)))
 
             for i, finding in enumerate(findings, 1):
                 with st.container():
@@ -389,11 +389,11 @@ class RewritePage:
 
     def _quantification_helper(self, cv_text: str):
         """Help users add metrics to their achievements."""
-        st.markdown("### Achievement Quantification Helper")
-        st.markdown("Identify vague statements and get prompts to add impactful metrics.")
+        st.markdown(f"### {t('quant_helper_title')}")
+        st.markdown(t('quant_helper_desc'))
 
-        if st.button("Find Quantification Opportunities", type="primary"):
-            with st.spinner("Scanning for metrics..."):
+        if st.button(t("find_quant_btn"), type="primary"):
+            with st.spinner(t("scanning_metrics_spinner")):
                 suggestions = self.rewrite_engine.suggest_quantification(cv_text)
                 st.session_state['quantification_results'] = suggestions
                 st.session_state['quantification_scanned'] = True
@@ -401,10 +401,10 @@ class RewritePage:
         if st.session_state.get('quantification_scanned'):
             suggestions = st.session_state.get('quantification_results', [])
             if not suggestions:
-                st.success("Your CV already has good quantification!")
+                st.success(t("good_quantification"))
                 return
 
-            st.info(f"Found {len(suggestions)} statements that could be strengthened with numbers:")
+            st.info(t("quant_opportunities_found", count=len(suggestions)))
 
             for i, suggestion in enumerate(suggestions, 1):
                 with st.container():
@@ -416,7 +416,7 @@ class RewritePage:
                     """, unsafe_allow_html=True)
 
                     user_input = st.text_input(
-                        f"Add your metric:",
+                        t("add_metric"),
                         key=f"quant_{i}",
                         placeholder="e.g., 25%, $50K, 10 team members",
                     )
@@ -427,15 +427,12 @@ class RewritePage:
 
     def _double_test_tab(self, cv_text: str, job_description: str):
         """Step 3 Double Test scan (ATS filter + human recruiter 200-CV scanner)."""
-        st.markdown("### ATS & Recruiter Double Test Scan")
-        st.markdown(
-            "This scanner analyzes your CV against the job description simultaneously from the perspective of "
-            "an automated ATS parsing filter and a tired human recruiter reviewing 200 CVs in a row."
-        )
+        st.markdown(f"### {t('double_test_title')}")
+        st.markdown(t('double_test_desc'))
         
         cv_to_scan = cv_text
         if st.session_state.get('accepted_rewrites'):
-            st.info("Applying your accepted rewrites to the scanned CV text for an accurate assessment.")
+            st.info(t("applying_rewrites_info"))
             merged_parts = []
             parsed_sections = st.session_state['analysis_results'].get('parsed_sections', {})
             for sec_name, sec_content in parsed_sections.items():
@@ -445,21 +442,21 @@ class RewritePage:
                     merged_parts.append(f"## {sec_name.upper()}\n{sec_content}")
             cv_to_scan = "\n\n".join(merged_parts)
 
-        if st.button("Run Double Test Scan", type="primary", key="run_double_test_btn"):
+        if st.button(t("run_double_test_btn"), type="primary", key="run_double_test_btn"):
             if not job_description:
-                st.warning("Please add a job description first.")
+                st.warning(t("please_add_jd_first"))
                 return
                 
-            with st.spinner("Pressure testing your CV against ATS and recruiters..."):
+            with st.spinner(t("double_test_spinner")):
                 try:
                     if self.rewrite_engine.ollama_client.is_connected():
                         result = self.rewrite_engine.ollama_client.run_double_test_scan(cv_to_scan, job_description)
                         st.session_state['double_test_scan_result'] = result
                     else:
-                        st.error("Ollama is disconnected. Unable to run scan.")
+                        st.error(t("ollama_disconnected"))
                 except Exception as e:
                     st.error(f"Error running scan: {str(e)}")
 
         if 'double_test_scan_result' in st.session_state:
-            st.markdown("#### Double Test Diagnostic Results:")
+            st.markdown(t("double_test_results"))
             st.markdown(st.session_state['double_test_scan_result'])

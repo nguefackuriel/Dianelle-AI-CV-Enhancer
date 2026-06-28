@@ -174,6 +174,7 @@ from utils.cv_analyzer import CVAnalyzer
 from utils.keyword_extractor import KeywordExtractor
 from utils.ollama_client import OllamaClient
 from utils.job_matcher import JobMatcher
+from utils.translations import t
 from components.chat_interface import ChatInterface
 from components.improvement_suggestions import ImprovementSuggestions
 from components.analytics_dashboard import AnalyticsDashboard
@@ -193,7 +194,7 @@ def main():
 
     # Header
     st.markdown('<h1 class="main-header">Dianelle AI CV Enhancer</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Your AI career assistant — Analyze, Enhance, Export, and Land Your Dream Job</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="sub-header">{t("main_subtitle")}</p>', unsafe_allow_html=True)
 
     # Initialize session state
     defaults = {
@@ -212,13 +213,27 @@ def main():
 
     # Sidebar navigation
     with st.sidebar:
-        st.markdown("## Navigation")
+        # Language selection
+        if 'language' not in st.session_state:
+            st.session_state['language'] = 'Français'
+            
+        lang_choice = st.selectbox(
+            "Language / Langue",
+            options=["Français", "English"],
+            index=0 if st.session_state['language'] == 'Français' else 1,
+            key="language_selector"
+        )
+        if lang_choice != st.session_state['language']:
+            st.session_state['language'] = lang_choice
+            st.rerun()
+
+        st.markdown(f"## {t('Navigation')}")
 
         if 'current_page' not in st.session_state:
             st.session_state['current_page'] = "Home"
 
         page = st.selectbox(
-            "Choose a feature:",
+            t("choose_feature"),
             [
                 "Home",
                 "CV Analysis",
@@ -232,17 +247,18 @@ def main():
                 "Analytics Dashboard",
                 "Settings",
             ],
+            format_func=t,
             key="current_page"
         )
 
         st.markdown("---")
-        st.markdown("### System Status")
+        st.markdown(f"### {t('sys_status')}")
 
         # Check Ollama connection
         try:
             ollama_client = OllamaClient()
             if ollama_client.is_connected():
-                st.success("Dianelle AI Online")
+                st.success(t("ollama_online"))
                 models = ollama_client.get_available_models()
                 if models:
                     if 'selected_model' not in st.session_state:
@@ -253,7 +269,7 @@ def main():
                         
                     model_idx = models.index(st.session_state['selected_model'])
                     
-                    st.caption("Active Model:")
+                    st.caption(t("active_model"))
                     selected_model = st.selectbox(
                         "Active Model Selection",
                         options=models,
@@ -265,26 +281,26 @@ def main():
                         st.session_state['selected_model'] = selected_model
                         st.rerun()
             else:
-                st.error("Ollama Disconnected")
+                st.error(t("ollama_offline"))
                 st.info("Run: `ollama serve`")
         except Exception:
-            st.error("Ollama Not Available")
+            st.error(t("ollama_unavailable"))
             st.info("Install: https://ollama.ai")
 
         # Quick stats
         st.markdown("---")
-        st.markdown("### Session")
+        st.markdown(f"### {t('session')}")
         has_stats = False
         if st.session_state.get('analysis_results'):
             score = st.session_state['analysis_results'].get('ats_score', 0)
-            st.metric("ATS Score", f"{score}/100")
+            st.metric(t("ats_score"), f"{score}/100")
             has_stats = True
         if st.session_state.get('accepted_rewrites'):
-            st.metric("Enhanced Sections", len(st.session_state['accepted_rewrites']))
+            st.metric(t("enhanced_sections"), len(st.session_state['accepted_rewrites']))
             has_stats = True
         
         if not has_stats:
-            st.caption("No active session data. Once you upload and analyze your CV under **CV Analysis**, your ATS score and optimization metrics will appear here.")
+            st.caption(t("no_session_data"))
 
     # Main content based on selected page
     if page == "Home":
@@ -319,11 +335,11 @@ def _display_workflow_stepper():
     has_rewrites = bool(st.session_state.get('accepted_rewrites'))
 
     steps = [
-        ("1", "Upload CV", has_cv),
-        ("2", "Add Job Desc", has_jd),
-        ("3", "Analyze", has_analysis),
-        ("4", "Enhance", has_rewrites),
-        ("5", "Export", False),
+        ("1", t("step_upload"), has_cv),
+        ("2", t("step_jd"), has_jd),
+        ("3", t("step_analyze"), has_analysis),
+        ("4", t("step_enhance"), has_rewrites),
+        ("5", t("step_export"), False),
     ]
 
     html_parts = ['<div class="stepper-container">']
@@ -349,36 +365,7 @@ def show_home_page():
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.markdown("""
-        ## Welcome to Dianelle, Your AI Career Assistant
-
-        Hi! I'm **Dianelle**, your personal AI career assistant. I'll help you transform your CV
-        into an ATS-optimized powerhouse that gets you past automated screening and noticed by recruiters.
-
-        ### What Can I Do For You?
-
-        | Feature | Description |
-        |---------|-------------|
-        | **CV Analysis** | Upload your CV + job description and get a real ATS compatibility score |
-        | **CV Rewriter** | AI rewrites your CV sections with ATS-optimized language |
-        | **Cover Letter** | Generate personalized cover letters with tone & length options |
-        | **Export** | Download your enhanced CV as professional DOCX or PDF |
-        | **Interview Prep** | Practice questions, STAR responses, elevator pitches |
-        | **LinkedIn** | Optimize your LinkedIn headline, About section, and keywords |
-        | **AI Chat** | Chat with Dianelle for career advice anytime |
-        | **Analytics** | Track your improvement with detailed dashboards |
-
-        ### How It Works
-
-        1. **Upload** your current CV (PDF or DOCX)
-        2. **Paste** the job description you're targeting
-        3. **Analyze** — get your ATS score with detailed breakdown
-        4. **Enhance** — Dianelle rewrites weak sections with ATS-optimized language
-        5. **Export** — download your enhanced CV in a professional template
-        6. **Prepare** — practice interview questions and craft your pitch
-
-        **Ready to land your dream job? Start with CV Analysis from the sidebar.**
-        """)
+        st.markdown(t("home_intro_markdown"))
 
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
@@ -388,16 +375,16 @@ def show_home_page():
             score = st.session_state['analysis_results'].get('ats_score', 0)
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1.5rem; border-radius: 16px; text-align: center; color: white; margin-bottom: 1rem;">
-                <h3 style="margin:0; color:white;">Your ATS Score</h3>
+                <h3 style="margin:0; color:white;">{t("ats_score")}</h3>
                 <h1 style="margin:0; font-size: 3rem; color:white;">{score}</h1>
-                <p style="margin:0; color:rgba(255,255,255,0.8);">out of 100</p>
+                <p style="margin:0; color:rgba(255,255,255,0.8);">{t("out_of_100")}</p>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.markdown("""
+            st.markdown(f"""
             <div style="background: linear-gradient(135deg, #667eea15, #764ba215); padding: 1.5rem; border-radius: 16px 16px 0 0; text-align: center; border: 2px dashed #667eea; border-bottom: none; margin-bottom: 0px;">
-                <h3 style="margin:0; color: #667eea; font-weight: 600;">Get Started</h3>
-                <p style="margin:0.5rem 0 0 0; color: #aaa; font-size: 0.9rem;">Upload your CV to see your ATS score</p>
+                <h3 style="margin:0; color: #667eea; font-weight: 600;">{t("get_started_header")}</h3>
+                <p style="margin:0.5rem 0 0 0; color: #aaa; font-size: 0.9rem;">{t("get_started_desc")}</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -417,7 +404,7 @@ def show_home_page():
             
             st.markdown('<div class="get-started-btn">', unsafe_allow_html=True)
             st.button(
-                "Start CV Analysis",
+                t("start_analysis_btn"),
                 type="primary",
                 use_container_width=True,
                 on_click=navigate_to,
@@ -427,36 +414,22 @@ def show_home_page():
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("""
-        ### Quick Tips
-
-        **Do:**
-        - Use action verbs (achieved, managed, led)
-        - Quantify accomplishments with numbers
-        - Include relevant keywords from the JD
-        - Keep formatting simple and clean
-        - Tailor your CV for each application
-
-        **Avoid:**
-        - Tables, graphics, or columns
-        - Headers/footers
-        - Unusual fonts or colors
-        """)
+        st.markdown(t("home_tips_markdown"))
 
 
 def show_cv_analysis_page():
     """Display the CV analysis page"""
 
-    st.markdown("## CV Analysis & Enhancement")
+    st.markdown(f"## {t('cv_analysis_title')}")
 
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown("### Upload Your CV")
+        st.markdown(f"### {t('upload_cv')}")
         uploaded_file = st.file_uploader(
-            "Choose your CV file",
+            t("choose_file"),
             type=['pdf', 'docx', 'txt'],
-            help="Upload your CV in PDF, DOCX, or TXT format"
+            help=t("file_uploader_help")
         )
 
         if uploaded_file is not None:
@@ -465,23 +438,23 @@ def show_cv_analysis_page():
                 cv_text = pdf_processor.extract_text(uploaded_file)
                 st.session_state.cv_text = cv_text
 
-                with st.expander("Extracted CV Text Preview"):
+                with st.expander(t("cv_preview")):
                     preview = cv_text[:1500] + ("..." if len(cv_text) > 1500 else "")
                     st.text_area("CV Content", preview, height=200, disabled=True)
 
                 word_count = len(cv_text.split())
-                st.success(f"CV processed successfully ({word_count} words)")
+                st.success(t("cv_processed_success", word_count=word_count))
 
             except Exception as e:
-                st.error(f"Error processing CV: {str(e)}")
+                st.error(t("error_processing_cv", error=str(e)))
 
     with col2:
-        st.markdown("### Job Description")
+        st.markdown(f"### {t('job_desc_title')}")
         job_description = st.text_area(
-            "Paste the job description here:",
+            t("paste_jd"),
             value=st.session_state.job_description,
             height=300,
-            placeholder="Copy and paste the complete job description including requirements, responsibilities, and qualifications..."
+            placeholder=t("jd_placeholder")
         )
 
         if job_description:
@@ -493,8 +466,8 @@ def show_cv_analysis_page():
         col1, col2, col3 = st.columns([1, 2, 1])
 
         with col2:
-            if st.button("Analyze CV", type="primary", use_container_width=True):
-                with st.spinner("Running ATS simulation... This may take a moment"):
+            if st.button(t("analyze_cv_btn"), type="primary", use_container_width=True):
+                with st.spinner(t("running_ats_spinner")):
 
                     try:
                         cv_analyzer = CVAnalyzer()
@@ -519,10 +492,10 @@ def show_cv_analysis_page():
                                 del st.session_state[key]
 
                         st.session_state.analysis_results = results
-                        st.success("Analysis complete!")
+                        st.success(t("analysis_complete"))
 
                     except Exception as e:
-                        st.error(f"Analysis failed: {str(e)}")
+                        st.error(t("analysis_failed", error=str(e)))
 
     # Display results
     if st.session_state.analysis_results:
@@ -533,7 +506,7 @@ def display_analysis_results(results):
     """Display the analysis results"""
 
     st.markdown("---")
-    st.markdown("## Analysis Results")
+    st.markdown(f"## {t('ats_simulation_results')}")
 
     # ATS Score + Job Fit
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -541,12 +514,13 @@ def display_analysis_results(results):
     with col1:
         score = results.get('ats_score', 0)
         score_color = "#00c851" if score >= 80 else "#ffa500" if score >= 60 else "#ff4b4b"
+        score_text = t("score_excellent") if score >= 80 else t("score_good") if score >= 60 else t("score_improve")
         st.markdown(f"""
         <div style="background: {score_color}; padding: 1.5rem; border-radius: 16px; text-align: center; margin: 1rem 0;">
-            <h3 style="color: white; margin: 0;">ATS Score</h3>
+            <h3 style="color: white; margin: 0;">{t("ats_score")}</h3>
             <h1 style="color: white; margin: 8px 0; font-size: 3rem;">{score}/100</h1>
             <p style="color: white; margin: 0; font-size: 1rem;">
-                {"Excellent!" if score >= 80 else "Good Progress" if score >= 60 else "Room for Improvement"}
+                {score_text}
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -555,9 +529,9 @@ def display_analysis_results(results):
         sim = results.get('semantic_similarity', 0)
         st.markdown(f"""
         <div style="background: #f0f4ff; padding: 1.5rem; border-radius: 16px; text-align: center; margin: 1rem 0; border: 2px solid #667eea;">
-            <h3 style="color: #667eea; margin: 0;">Semantic Match</h3>
+            <h3 style="color: #667eea; margin: 0;">{t("semantic_match")}</h3>
             <h1 style="color: #667eea; margin: 8px 0; font-size: 3rem;">{sim*100:.0f}%</h1>
-            <p style="color: #888; margin: 0; font-size: 0.9rem;">Content relevance to JD</p>
+            <p style="color: #888; margin: 0; font-size: 0.9rem;">{t("content_relevance_desc")}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -565,25 +539,30 @@ def display_analysis_results(results):
         fit = results.get('job_fit', {})
         fit_score = fit.get('overall_fit', 0)
         fit_level = fit.get('fit_level', 'N/A')
+        # Translate fit level if it exists in translation catalog
+        fit_level_translated = t(f"fit_level_{fit_level.lower().replace(' ', '_')}")
+        if fit_level_translated == f"fit_level_{fit_level.lower().replace(' ', '_')}":
+            fit_level_translated = fit_level # Fallback
+            
         st.markdown(f"""
         <div style="background: #f0fff0; padding: 1.5rem; border-radius: 16px; text-align: center; margin: 1rem 0; border: 2px solid #00c851;">
-            <h3 style="color: #00c851; margin: 0;">Job Fit</h3>
+            <h3 style="color: #00c851; margin: 0;">{t("job_fit")}</h3>
             <h1 style="color: #00c851; margin: 8px 0; font-size: 3rem;">{fit_score:.0f}%</h1>
-            <p style="color: #888; margin: 0; font-size: 0.9rem;">{fit_level}</p>
+            <p style="color: #888; margin: 0; font-size: 0.9rem;">{fit_level_translated}</p>
         </div>
         """, unsafe_allow_html=True)
 
     # Component scores breakdown
     component_scores = results.get('component_scores', {})
     if component_scores:
-        st.markdown("### Score Breakdown")
+        st.markdown(f"### {t('score_breakdown')}")
         cols = st.columns(5)
         score_labels = {
-            'semantic_relevance': 'Relevance',
-            'keyword_match': 'Keywords',
-            'section_completeness': 'Sections',
-            'experience_match': 'Experience',
-            'quantified_achievements': 'Metrics',
+            'semantic_relevance': t('relevance_label'),
+            'keyword_match': t('keywords_label'),
+            'section_completeness': t('sections_label'),
+            'experience_match': t('experience_label'),
+            'quantified_achievements': t('metrics_label'),
         }
         for i, (key, label) in enumerate(score_labels.items()):
             if key in component_scores:
@@ -595,14 +574,14 @@ def display_analysis_results(results):
     sections = ai_analysis.get('sections', {})
     red_flags = sections.get('red_flags', '')
     if red_flags:
-        st.markdown("### Recruiter Red Flags (10-Second Scan)")
+        st.markdown(f"### {t('red_flags_title')}")
         st.error(red_flags)
 
     # Detailed breakdown
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown("### Matched Keywords")
+        st.markdown(f"### {t('matched_keywords')}")
         matched_keywords = results.get('matched_keywords', [])
         missing_keywords = results.get('missing_keywords', [])
 
@@ -610,20 +589,21 @@ def display_analysis_results(results):
             for keyword in matched_keywords[:10]:
                 st.markdown(f"- {keyword}")
         else:
-            st.info("No matched keywords found.")
+            st.info(t("no_matched_keywords"))
 
         if missing_keywords:
-            st.markdown("### Missing Keywords")
+            st.markdown(f"### {t('missing_keywords')}")
             for keyword in missing_keywords[:10]:
                 st.markdown(f"- **{keyword}**")
 
     with col2:
-        st.markdown("### Improvement Areas")
+        st.markdown(f"### {t('improvement_areas')}")
         suggestions = results.get('suggestions', [])
         for i, suggestion in enumerate(suggestions[:6], 1):
             priority_color = {'high': '#ff4444', 'medium': '#ffa500', 'low': '#00c851'}.get(
                 suggestion.get('priority', 'medium'), '#667eea'
             )
+            # Try to translate suggestion title / description if key exists, but usually dynamically computed in French/English by ollama or ats simulator. We display as is.
             st.markdown(f"""
             <div class="improvement-box" style="border-left-color: {priority_color};">
                 <strong>{i}. {suggestion['title']}</strong><br>
@@ -636,55 +616,57 @@ def display_analysis_results(results):
     edu = results.get('education_analysis', {})
 
     if exp or edu:
-        st.markdown("### Requirements Match")
+        st.markdown(f"### {t('requirements_match')}")
         col1, col2 = st.columns(2)
 
         with col1:
             if exp:
                 req = exp.get('required_years')
                 cv = exp.get('stated_years') or exp.get('timeline_years')
-                status = "Met" if exp.get('score', 0) >= 70 else "Gap"
-                st.markdown(f"**[{status}] Experience:** {cv or 'N/A'} years"
-                            f"{f' (required: {req}+)' if req else ''}")
+                status_key = "status_met" if exp.get('score', 0) >= 70 else "status_gap"
+                status = t(status_key)
+                req_text = f" ({t('required')}: {req}+)" if req else ''
+                st.markdown(f"**[{status}] {t('experience_label')}:** {cv or 'N/A'} {t('years_label')}{req_text}")
 
         with col2:
             if edu:
                 req = edu.get('required_level', 'N/A')
                 cv = edu.get('cv_level', 'N/A')
-                status = "Met" if edu.get('score', 0) >= 70 else "Gap"
-                st.markdown(f"**[{status}] Education:** {cv or 'N/A'}"
-                            f"{f' (required: {req})' if req and req != 'N/A' else ''}")
+                status_key = "status_met" if edu.get('score', 0) >= 70 else "status_gap"
+                status = t(status_key)
+                req_text = f" ({t('required')}: {req})" if req and req != 'N/A' else ''
+                st.markdown(f"**[{status}] {t('education_label')}:** {cv or 'N/A'}{req_text}")
 
     # Transferable skills
     fit = results.get('job_fit', {})
     transferable = fit.get('transferable_skills', [])
     if transferable:
-        st.markdown("### Transferable Skills")
+        st.markdown(f"### {t('transferable_skills')}")
         for ts in transferable[:5]:
-            st.markdown(f"- Your **{ts['your_skill']}** relates to **{ts['job_needs']}**")
+            st.markdown(t("transferable_skill_relates", your_skill=ts['your_skill'], job_needs=ts['job_needs']))
 
     # AI Analysis
     ai = results.get('ai_analysis', {})
     ai_text = ai.get('analysis_text', '')
     if ai_text:
         if 'unavailable' in ai_text.lower() or 'error' in ai_text.lower():
-            st.warning("⚠️ **Analyse IA Dianelle indisponible** : Impossible de contacter Ollama ou le modèle sélectionné. Vérifiez que le serveur local est actif (`ollama serve`) et que le modèle est installé.")
+            st.warning(t("ollama_warning"))
         else:
-            with st.expander("Dianelle's AI Analysis", expanded=False):
+            with st.expander(t("ai_analysis_title"), expanded=False):
                 st.markdown(ai_text)
 
     # Call to action
     st.markdown("---")
-    st.info("**Next step:** Go to **CV Rewriter** to automatically enhance your CV sections.")
+    st.info(t("next_step_rewriter"))
 
 
 def show_chat_page():
     """Display the chat interface"""
 
-    st.markdown("## Chat with Dianelle — Your AI Career Assistant")
+    st.markdown(f"## {t('chat_title')}")
 
     if not st.session_state.cv_text:
-        st.warning("Please upload and analyze your CV first to get personalized advice.")
+        st.warning(t("please_upload_analyze_first"))
         return
 
     chat_interface = ChatInterface()
@@ -697,12 +679,12 @@ def show_chat_page():
             st.chat_message("assistant").write(message['content'])
 
     # Chat input
-    if prompt := st.chat_input("Ask Dianelle anything about your CV or career..."):
+    if prompt := st.chat_input(t("chat_input_placeholder")):
         st.session_state.chat_history.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
+            with st.spinner(t("thinking_spinner")):
                 try:
                     response = chat_interface.get_response(
                         prompt,
@@ -715,7 +697,7 @@ def show_chat_page():
                     st.session_state.chat_history.append({"role": "assistant", "content": response})
 
                 except Exception as e:
-                    error_msg = f"Sorry, I encountered an error: {str(e)}"
+                    error_msg = t("chat_error", error=str(e))
                     st.error(error_msg)
                     st.session_state.chat_history.append({"role": "assistant", "content": error_msg})
 
@@ -723,10 +705,10 @@ def show_chat_page():
 def show_analytics_page():
     """Display the analytics dashboard"""
 
-    st.markdown("## Analytics Dashboard")
+    st.markdown(f"## {t('Analytics Dashboard')}")
 
     if not st.session_state.analysis_results:
-        st.warning("No analysis data available. Please analyze your CV first.")
+        st.warning(t("please_analyze_first"))
         return
 
     analytics_dashboard = AnalyticsDashboard()
@@ -736,12 +718,12 @@ def show_analytics_page():
 def show_settings_page():
     """Display the settings page"""
 
-    st.markdown("## Settings")
+    st.markdown(f"## {t('Settings')}")
 
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown("### AI Model Settings")
+        st.markdown(f"### {t('ai_model_settings')}")
 
         try:
             ollama_client = OllamaClient()
@@ -754,73 +736,73 @@ def show_settings_page():
                     st.session_state['selected_model'] = available[0]
                     
                 default_idx = available.index(st.session_state['selected_model'])
-                model_name = st.selectbox("Choose AI Model:", available, index=default_idx, key="settings_model_selector")
+                model_name = st.selectbox(t("choose_ai_model"), available, index=default_idx, key="settings_model_selector")
                 if model_name != st.session_state['selected_model']:
                     st.session_state['selected_model'] = model_name
                     st.rerun()
             else:
                 st.selectbox(
-                    "Choose AI Model:",
+                    t("choose_ai_model"),
                     ["llama3.2", "mistral", "codellama", "neural-chat"],
                     disabled=True
                 )
         except Exception:
             st.selectbox(
-                "Choose AI Model:",
+                t("choose_ai_model"),
                 ["llama3.2", "mistral", "codellama", "neural-chat"],
                 disabled=True
             )
 
         temperature = st.slider(
-            "Response Creativity",
+            t("response_creativity"),
             min_value=0.0,
             max_value=1.0,
             value=0.7,
-            help="Higher values make responses more creative but less focused"
+            help=t("creativity_help")
         )
 
     with col2:
-        st.markdown("### Interface Settings")
+        st.markdown(f"### {t('interface_settings')}")
 
-        st.info("The interface automatically adapts to your Streamlit theme settings.")
+        st.info(t("theme_info"))
 
         show_advanced = st.checkbox(
-            "Show Advanced Features",
-            help="Enable advanced CV analysis features"
+            t("show_advanced"),
+            help=t("advanced_help")
         )
 
-    st.markdown("### Data Management")
+    st.markdown(f"### {t('data_management')}")
 
     col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
-        if st.button("Export Analysis"):
+        if st.button(t("export_analysis_btn")):
             if st.session_state.get('analysis_results'):
                 import json
                 analysis_json = json.dumps(
                     {k: v for k, v in st.session_state.analysis_results.items()
                      if k not in ('cv_text', 'job_description')},
-                    indent=2, default=str
+                     indent=2, default=str
                 )
                 st.download_button(
-                    "Download JSON",
+                    t("download_json_btn"),
                     analysis_json,
                     file_name="cv_analysis.json",
                     mime="application/json",
                 )
             else:
-                st.info("No analysis to export yet.")
+                st.info(t("no_analysis_export"))
 
     with col2:
-        if st.button("Clear Session"):
+        if st.button(t("clear_session_btn")):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
-            st.success("Session cleared!")
+            st.success(t("session_cleared"))
             st.rerun()
 
     with col3:
-        if st.button("Help & Support"):
-            st.info("Contact support: nguefackuriel@gmail.com")
+        if st.button(t("help_support_btn")):
+            st.info(t("contact_support_desc"))
 
 
 if __name__ == "__main__":

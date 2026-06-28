@@ -7,6 +7,7 @@ import streamlit as st
 import re
 from typing import Dict, List, Any
 from utils.ollama_client import OllamaClient
+from utils.translations import t
 
 
 class LinkedInOptimizer:
@@ -17,14 +18,11 @@ class LinkedInOptimizer:
 
     def display(self):
         """Display the LinkedIn optimizer page."""
-        st.markdown("## LinkedIn Profile Optimizer")
-        st.markdown(
-            "*Optimize your LinkedIn profile to complement your CV, "
-            "align with your target role, and attract recruiters through LinkedIn search.*"
-        )
+        st.markdown(f"## {t('linkedin_optimizer_title')}")
+        st.markdown(t('linkedin_optimizer_subtitle'))
 
         if not st.session_state.get('cv_text'):
-            st.warning("Please upload your CV first on the **CV Analysis** page.")
+            st.warning(t("please_upload_first"))
             return
 
         cv_text = st.session_state['cv_text']
@@ -33,11 +31,11 @@ class LinkedInOptimizer:
         parsed_sections = analysis.get('parsed_sections', {}) if analysis else {}
 
         tabs = st.tabs([
-            "Headline Optimizer",
-            "About Section",
-            "Experience Optimizer",
-            "Skills & Featured",
-            "Consistency Check",
+            t("tab_headline_optimizer"),
+            t("tab_about_section"),
+            t("tab_experience_optimizer"),
+            t("tab_skills_featured"),
+            t("tab_consistency_check"),
         ])
 
         with tabs[0]:
@@ -57,34 +55,31 @@ class LinkedInOptimizer:
 
     def _headline_generator(self, cv_text: str, job_description: str):
         """Generate LinkedIn headlines under 220 chars."""
-        st.markdown("### LinkedIn Headline Optimizer")
-        st.markdown(
-            "Your headline is the most critical part of your profile for SEO search. "
-            "LinkedIn allows up to 220 characters. Focus on keywords, target specialty, and results, not just job titles."
-        )
+        st.markdown(f"### {t('linkedin_headline_optimizer')}")
+        st.markdown(t('linkedin_headline_desc'))
 
         col1, col2 = st.columns(2)
         with col1:
-            current_title = st.text_input("Current job title:", placeholder="e.g., Software Engineer")
+            current_title = st.text_input(t("current_job_title_label"), placeholder="e.g., Software Engineer")
         with col2:
-            target_title = st.text_input("Target job title:", placeholder="e.g., Senior Data Scientist")
+            target_title = st.text_input(t("target_job_title_label"), placeholder="e.g., Senior Data Scientist")
 
-        if st.button("Generate Headlines", type="primary", key="gen_headlines"):
-            with st.spinner("Crafting headlines..."):
+        if st.button(t("generate_headlines_btn"), type="primary", key="gen_headlines"):
+            with st.spinner(t("crafting_headlines_spinner")):
                 headlines = self._generate_headlines(
                     cv_text, current_title, target_title, job_description
                 )
                 st.session_state['linkedin_headlines'] = headlines
 
         if 'linkedin_headlines' in st.session_state:
-            st.markdown("**Choose your favorite:**")
+            st.markdown(t("choose_favorite_title"))
             for i, headline in enumerate(st.session_state['linkedin_headlines'], 1):
                 char_count = len(headline)
                 color = "#2e7d32" if char_count <= 220 else "#f44336"
                 st.markdown(f"""
                 <div style="padding: 0.8rem; border: 1px solid #e0e0e0; border-radius: 8px; margin: 0.5rem 0; background-color: #fafafa;">
                     <strong>{i}.</strong> {headline}
-                    <span style="color: {color}; float: right; font-size: 0.8rem; font-weight: bold;">{char_count}/220 chars</span>
+                    <span style="color: {color}; float: right; font-size: 0.8rem; font-weight: bold;">{char_count}/220 {t('chars_label')}</span>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -94,27 +89,24 @@ class LinkedInOptimizer:
 
     def _about_section_writer(self, cv_text: str, job_description: str):
         """Generate LinkedIn About section based on Hadrien's 3-paragraph rule."""
-        st.markdown("### About Section Writer (Hadrien's Formula)")
-        st.markdown(
-            "Hadrien's formula dictates a strict 3-paragraph layout: an attention-grabbing hook (no generic openings), "
-            "a summary of your professional journey with 2-3 metric-driven achievements, and a clear call to action (CTA). No emojis."
-        )
+        st.markdown(f"### {t('about_section_writer')}")
+        st.markdown(t('about_section_desc'))
 
-        if st.button("Generate About Section", type="primary", key="gen_about"):
-            with st.spinner("Writing your About section..."):
+        if st.button(t("generate_about_btn"), type="primary", key="gen_about"):
+            with st.spinner(t("writing_about_spinner")):
                 about = self._generate_about_section(cv_text, job_description)
                 st.session_state['linkedin_about'] = about
 
         if 'linkedin_about' in st.session_state:
-            edited = st.text_area("Edit your About section:", st.session_state['linkedin_about'], height=300, key="about_edit")
+            edited = st.text_area(t("edit_about_label"), st.session_state['linkedin_about'], height=300, key="about_edit")
 
             char_count = len(edited)
             color = "#2e7d32" if char_count <= 2600 else "#f44336"
-            st.caption(f"Character count: <span style='color:{color}'>{char_count}/2,600</span>",
+            st.caption(f"{t('character_count_label')} <span style='color:{color}'>{char_count}/2,600</span>",
                        unsafe_allow_html=True)
 
             st.download_button(
-                "Download About Section",
+                t("download_about_btn"),
                 edited,
                 file_name="linkedin_about.txt",
                 mime="text/plain",
@@ -126,28 +118,25 @@ class LinkedInOptimizer:
 
     def _experience_optimizer(self, parsed_sections: Dict[str, str], job_description: str):
         """Optimize experiences for LinkedIn (Google XYZ + conversational + what was learned)."""
-        st.markdown("### Experience section Optimizer")
-        st.markdown(
-            "Rewrite your experience section to be conversational, results-driven (Google XYZ), "
-            "and add a 'What I learned' takeaway line at the end of each position."
-        )
+        st.markdown(f"### {t('experience_optimizer_title_li')}")
+        st.markdown(t('experience_optimizer_desc_li'))
 
         current_exp = parsed_sections.get('experience', '')
         if not current_exp:
-            st.info("No parsed experience section was auto-detected from your CV. You can paste it below.")
+            st.info(t("no_parsed_experience_info"))
 
         exp_to_optimize = st.text_area(
-            "Current Experience Section:",
+            t("current_experience_label"),
             value=current_exp,
             height=200,
             placeholder="Paste your job details here..."
         )
 
-        if st.button("Optimize Experience for LinkedIn", type="primary", key="optimize_exp_btn"):
+        if st.button(t("optimize_experience_btn"), type="primary", key="optimize_exp_btn"):
             if not exp_to_optimize.strip():
                 st.warning("Please paste your experience section first.")
                 return
-            with st.spinner("Optimizing experiences..."):
+            with st.spinner(t("optimizing_experiences_spinner")):
                 try:
                     if self.ollama_client.is_connected():
                         optimized = self.ollama_client.generate_linkedin_experience(exp_to_optimize, job_description)
@@ -158,15 +147,15 @@ class LinkedInOptimizer:
                     st.error(f"Error: {str(e)}")
 
         if 'linkedin_optimized_experience' in st.session_state:
-            st.markdown("**Optimized Experience Section:**")
+            st.markdown(f"**{t('optimized_experience_title_li')}**")
             edited_exp = st.text_area(
-                "Edit optimized experience:",
+                t("edit_optimized_experience_label"),
                 st.session_state['linkedin_optimized_experience'],
                 height=300,
                 key="edit_optimized_exp"
             )
             st.download_button(
-                "Download Experiences",
+                t("download_experiences_btn"),
                 edited_exp,
                 file_name="linkedin_experience.txt",
                 mime="text/plain"
@@ -178,14 +167,11 @@ class LinkedInOptimizer:
 
     def _skills_featured_optimizer(self, cv_text: str, job_description: str):
         """Suggest pinned skills and Featured section items."""
-        st.markdown("### Skills & Featured Section Recommender")
-        st.markdown(
-            "Optimize your pinned skills based on recruiter search priorities, "
-            "and get high-impact recommendations for your LinkedIn 'Featured' section."
-        )
+        st.markdown(f"### {t('skills_featured_title')}")
+        st.markdown(t('skills_featured_desc'))
 
-        if st.button("Generate Recommendations", type="primary", key="gen_skills_featured"):
-            with st.spinner("Generating recommendations..."):
+        if st.button(t("generate_recommendations_btn"), type="primary", key="gen_skills_featured"):
+            with st.spinner(t("generating_recommendations_spinner")):
                 try:
                     if self.ollama_client.is_connected():
                         recommendations = self.ollama_client.generate_linkedin_skills_featured(cv_text, job_description)
@@ -204,21 +190,21 @@ class LinkedInOptimizer:
 
     def _consistency_checker(self, cv_text: str):
         """Check CV-LinkedIn consistency."""
-        st.markdown("### CV-LinkedIn Consistency Check")
-        st.markdown("Paste your current LinkedIn About section or job details to check for inconsistencies with your CV.")
+        st.markdown(f"### {t('consistency_check_title')}")
+        st.markdown(t('consistency_check_desc'))
 
         linkedin_text = st.text_area(
-            "Paste your current LinkedIn Profile text:",
+            t("paste_linkedin_label"),
             height=200,
             placeholder="Paste your LinkedIn About section or job details here...",
         )
 
-        if st.button("Check Consistency", type="primary", key="check_consistency"):
+        if st.button(t("check_consistency_btn"), type="primary", key="check_consistency"):
             if not linkedin_text.strip():
                 st.warning("Please paste your LinkedIn text.")
                 return
 
-            with st.spinner("Checking consistency..."):
+            with st.spinner(t("checking_consistency_spinner")):
                 issues = self._check_consistency(cv_text, linkedin_text)
                 st.session_state['linkedin_consistency_issues'] = issues
                 st.session_state['linkedin_consistency_checked'] = True
@@ -226,9 +212,9 @@ class LinkedInOptimizer:
         if st.session_state.get('linkedin_consistency_checked'):
             issues = st.session_state.get('linkedin_consistency_issues', [])
             if not issues:
-                st.success("Great! Your CV and LinkedIn are consistent.")
+                st.success(t("linkedin_consistency_success"))
             else:
-                st.warning(f"Found {len(issues)} potential inconsistency/inconsistencies:")
+                st.warning(t("linkedin_inconsistencies_found", count=len(issues)))
                 for issue in issues:
                     st.markdown(f"""
                     <div style="padding: 0.5rem; border-left: 3px solid #ff9800; background: #fff3e0; margin: 0.3rem 0; border-radius: 4px;">
@@ -334,25 +320,25 @@ Write ONLY the About section:"""
         cv_titles = re.findall(r'(?:^|\n)\s*([A-Z][A-Za-z\s]+(?:Manager|Engineer|Developer|Director|Analyst|Designer|Lead|Specialist|Coordinator|Consultant))', cv_text)
         for title in cv_titles[:3]:
             if title.lower() not in li_lower:
-                issues.append(f'Job title "{title}" appears in CV but not in LinkedIn')
+                issues.append(t("inconsistency_title", title=title))
 
         # Check for company names
         companies = re.findall(r'(?:at|@)\s+([A-Z][A-Za-z\s&]+?)(?:\s+[-–]|\s+\d)', cv_text)
         for company in companies[:3]:
             if company.strip().lower() not in li_lower:
-                issues.append(f'Company "{company.strip()}" mentioned in CV but not found in LinkedIn')
+                issues.append(t("inconsistency_company", company=company.strip()))
 
         # Check for degree mentions
         degrees = re.findall(r'(Bachelor|Master|PhD|MBA|B\.S\.|M\.S\.)', cv_text, re.IGNORECASE)
         for degree in set(degrees):
             if degree.lower() not in li_lower:
-                issues.append(f'Degree "{degree}" in CV but not mentioned in LinkedIn')
+                issues.append(t("inconsistency_degree", degree=degree))
 
         # Check year consistency
         cv_years = set(re.findall(r'20\d{2}', cv_text))
         li_years = set(re.findall(r'20\d{2}', linkedin_text))
         cv_only_years = cv_years - li_years
         if cv_only_years and len(cv_only_years) > 2:
-            issues.append(f'Years {", ".join(sorted(cv_only_years)[:3])} appear in CV but not LinkedIn')
+            issues.append(t("inconsistency_years", years=", ".join(sorted(cv_only_years)[:3])))
 
         return issues

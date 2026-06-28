@@ -7,6 +7,7 @@ import streamlit as st
 from typing import Dict, List, Any
 from utils.ollama_client import OllamaClient
 from utils.cv_exporter import CVExporter
+from utils.translations import t
 
 
 class CoverLetterPage:
@@ -31,15 +32,12 @@ class CoverLetterPage:
 
     def display(self):
         """Display the cover letter page."""
-        st.markdown("## AI Cover Letter Generator")
-        st.markdown(
-            "*Dianelle crafts personalized cover letters that complement your CV "
-            "and speak directly to the hiring manager.*"
-        )
+        st.markdown(f"## {t('cl_title')}")
+        st.markdown(t('cl_subtitle'))
 
         # Check prerequisites
         if not st.session_state.get('cv_text'):
-            st.warning("Please upload your CV first on the **CV Analysis** page.")
+            st.warning(t("please_upload_first_cl"))
             return
 
         cv_text = st.session_state['cv_text']
@@ -47,43 +45,43 @@ class CoverLetterPage:
         analysis = st.session_state.get('analysis_results', {})
 
         # ----- Configuration -----
-        st.markdown("### Cover Letter Settings")
+        st.markdown(f"### {t('cl_settings')}")
 
         use_hadrien_formula = st.checkbox(
-            "Use Hadrien's 'Impossible to Reject' 250-word Letter Formula (Recommended)",
+            t("use_hadrien_formula"),
             value=True,
-            help="Generates a high-impact, direct 4-paragraph letter addressing company challenges, achievements, and gaps head-on."
+            help=t("hadrien_formula_help")
         )
 
         col1, col2 = st.columns(2)
 
         with col1:
             company_name = st.text_input(
-                "Company Name:",
-                placeholder="e.g., Google, Microsoft, Acme Corp",
+                t("company_name_label"),
+                placeholder=t("company_name_placeholder"),
             )
             hiring_manager = st.text_input(
-                "Hiring Manager Name (optional):",
-                placeholder="e.g., Jane Smith",
+                t("hiring_manager_label"),
+                placeholder=t("hiring_manager_placeholder"),
             )
             role_title = st.text_input(
-                "Job Title:",
-                placeholder="e.g., Senior Software Engineer",
+                t("role_title_label"),
+                placeholder=t("role_title_placeholder"),
             )
 
         with col2:
             if use_hadrien_formula:
-                st.caption("Hadrien's Formula locks Length to <250 words and Tone to Confident/Direct.")
+                st.caption(t("hadrien_locked_info"))
                 gap_text = st.text_input(
-                    "CV Gap or Weakness to address head-on (optional):",
-                    placeholder="e.g., career gap in 2023, missing tool/skill, etc.",
-                    help="Hadrien's guide advises addressing a weakness head-on in the 3rd paragraph to show self-awareness and honesty."
+                    t("gap_text_label"),
+                    placeholder=t("gap_text_placeholder"),
+                    help=t("gap_text_help")
                 )
                 tone = "professional"
                 length = "short"
             else:
                 tone = st.selectbox(
-                    "Tone:",
+                    t("tone_label"),
                     list(self.TONES.keys()),
                     format_func=lambda x: self.TONES[x],
                 )
@@ -93,30 +91,30 @@ class CoverLetterPage:
                     format_func=lambda x: f"{self.LENGTHS[x][0]} ({self.LENGTHS[x][1]})",
                 )
                 gap_text = ""
-            num_variations = st.slider("Number of variations:", 1, 3, 1)
+            num_variations = st.slider(t("num_variations_label"), 1, 3, 1)
 
         # Company research / culture notes
-        with st.expander("Company Research Notes (optional but recommended)"):
+        with st.expander(t("company_research_title")):
             company_notes = st.text_area(
-                "Add notes about the company (values, mission, culture, recent news):",
+                t("company_notes_label"),
                 height=100,
-                placeholder="e.g., The company values innovation and diversity. They recently launched a new AI product line...",
+                placeholder=t("company_notes_placeholder"),
             )
             why_company = st.text_area(
-                "Why do you want to work at this company?",
+                t("why_company_label"),
                 height=80,
-                placeholder="e.g., I'm passionate about their mission to democratize AI...",
+                placeholder=t("why_company_placeholder"),
             )
 
         st.markdown("---")
 
         # ----- Generate -----
-        if st.button("Generate Cover Letter", type="primary", use_container_width=True):
+        if st.button(t("generate_cl_btn"), type="primary", use_container_width=True):
             if not job_description:
-                st.warning("Please add a job description on the CV Analysis page first.")
+                st.warning(t("please_add_jd_cl"))
                 return
 
-            with st.spinner("Dianelle is writing your cover letter..."):
+            with st.spinner(t("generating_cl_spinner")):
                 variations = []
                 for i in range(num_variations):
                     cover_letter = self._generate_cover_letter(
@@ -268,10 +266,10 @@ Best regards,
 
     def _display_single_variation(self, cover_letter: str):
         """Display a single cover letter with editing and export."""
-        st.markdown("### Your Cover Letter")
+        st.markdown(f"### {t('your_cl_title')}")
 
         edited = st.text_area(
-            "Edit your cover letter:",
+            t("edit_cl_label"),
             cover_letter,
             height=400,
             key="cover_letter_edit",
@@ -281,33 +279,33 @@ Best regards,
 
         # Word count
         word_count = len(edited.split())
-        st.caption(f"Word count: {word_count}")
+        st.caption(t("word_count_label", count=word_count))
 
         # Actions
         self._display_actions(edited)
 
     def _display_multiple_variations(self, variations: List[str]):
         """Display multiple variations in tabs."""
-        st.markdown("### Cover Letter Variations")
-        st.info("Compare variations and pick your favorite!")
+        st.markdown(f"### {t('cl_variations_title')}")
+        st.info(t("compare_variations_info"))
 
-        tabs = st.tabs([f"Version {i+1}" for i in range(len(variations))])
+        tabs = st.tabs([t("version_label", num=i+1) for i in range(len(variations))])
 
         for i, (tab, letter) in enumerate(zip(tabs, variations)):
             with tab:
                 edited = st.text_area(
-                    f"Version {i+1}:",
+                    t("version_label", num=i+1) + ":",
                     letter,
                     height=350,
                     key=f"variation_{i}",
                 )
 
                 word_count = len(edited.split())
-                st.caption(f"Word count: {word_count}")
+                st.caption(t("word_count_label", count=word_count))
 
-                if st.button(f"Use Version {i+1}", key=f"use_v{i}"):
+                if st.button(t("use_version_btn", num=i+1), key=f"use_v{i}"):
                     st.session_state['final_cover_letter'] = edited
-                    st.success(f"Version {i+1} selected!")
+                    st.success(t("version_selected", num=i+1))
 
         # Actions for selected version
         if 'final_cover_letter' in st.session_state:
@@ -316,21 +314,20 @@ Best regards,
 
     def _display_actions(self, cover_letter: str):
         """Display action buttons for the cover letter."""
-        st.markdown("### Export Cover Letter")
+        st.markdown(f"### {t('export_cl_title')}")
 
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.button("Refine with Dianelle", use_container_width=True):
-                with st.spinner("Refining..."):
+            if st.button(t("refine_with_dianelle_btn"), use_container_width=True):
+                with st.spinner(t("refining_spinner")):
                     refined = self._refine_cover_letter(cover_letter)
                     st.session_state['final_cover_letter'] = refined
                     st.rerun()
 
         with col2:
-            # Copy to clipboard (Streamlit text download)
             st.download_button(
-                label="Download as TXT",
+                label=t("download_txt_btn"),
                 data=cover_letter,
                 file_name="Cover_Letter.txt",
                 mime="text/plain",
@@ -338,8 +335,7 @@ Best regards,
             )
 
         with col3:
-            # Generate DOCX
-            if st.button("Download as DOCX", use_container_width=True):
+            if st.button(t("download_docx_btn"), use_container_width=True):
                 try:
                     docx_buffer = self._generate_cover_letter_docx(cover_letter)
                     st.session_state['cl_docx'] = docx_buffer
@@ -348,7 +344,7 @@ Best regards,
 
         if st.session_state.get('cl_docx'):
             st.download_button(
-                label="Save DOCX",
+                label=t("save_docx_btn"),
                 data=st.session_state['cl_docx'],
                 file_name="Cover_Letter.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",

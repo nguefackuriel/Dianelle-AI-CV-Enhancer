@@ -76,6 +76,10 @@ Structures your profile into Hadrien's 5 key recruiter-friendly sections:
 * **Score Evolution**: Tracks your progress and ATS compatibility improvements over multiple iterations.
 * **Competency Breakdown**: Visualizes soft vs. technical skill coverage, layout compliance, and content impact.
 
+### 9. Bilingual Interface (English / French)
+* **Instant Toggle**: Switch the entire platform interface (buttons, forms, tooltips, warnings, recommendations, and prompts) between English and French at any time via the sidebar selector.
+* **Bilingual Localization**: All analysis instructions, resume tips, template options, and AI prompt contexts are fully localized in the active language.
+
 ---
 
 ## Technology Stack
